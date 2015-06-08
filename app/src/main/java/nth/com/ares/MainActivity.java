@@ -17,11 +17,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.RelativeLayout;
+import nth.com.ares.classes.Mensaje;
 import nth.com.ares.drawer.NavigationDrawerCallbacks;
 import nth.com.ares.drawer.NavigationDrawerFragment;
-import nth.com.ares.fragments.ChatFragment;
+import nth.com.ares.fragments.ChatFragmentList;
 import nth.com.ares.utils.Utils;
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.ConnectionConfiguration;
@@ -58,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
 
     private MainActivity context;
 
-    ChatFragment chatFragment;
+    ChatFragmentList chatFragmentList;
 
     View mLayoutMain;
 
@@ -100,8 +99,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
     public void onNavigationDrawerItemSelected(int position) {
         switch (position) {
             case Utils.CHAT_POS:
-                chatFragment = new ChatFragment();
-                Utils.openFragment(context, chatFragment, getString(R.string.chat_title));
+                chatFragmentList = new ChatFragmentList();
+                Utils.openFragment(context, chatFragmentList, getString(R.string.chat_title));
                 break;
             case Utils.ROOMS_POS:
                 break;
@@ -212,11 +211,11 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
         @Override
         protected Boolean doInBackground(Void... params) {
             // attempt authentication against a network service.
-            Log.i("XMPP", "Trying to establish connection: user=" + mUser + "  pass=" + mPassword);
+            Utils.log("XMPP", "Trying to establish connection: user=" + mUser + "  pass=" + mPassword);
             if (connection == null) {
-                Log.i("XMPP", "Connection not null");
+                Utils.log("XMPP", "Connection not null");
                 try {
-                    Log.i("XMPP", "Try");
+                    Utils.log("XMPP", "Try");
                     XMPPTCPConnectionConfiguration config = XMPPTCPConnectionConfiguration.builder()
                             .setUsernameAndPassword(mUser, mPassword)
                             .setServiceName(Utils.SERVICE_NAME)
@@ -227,10 +226,10 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
                     connection = new XMPPTCPConnection(config);
                     connection.connect();
                     connection.login();
-                    Log.i("XMPP", "LOGIN!! " + connection);
+                    Utils.log("XMPP", "LOGIN!! " + connection);
                     return true;
                 } catch (Exception e) {
-                    Log.i("XMPP", "Catch");
+                    Utils.log("XMPP", "Catch");
                     e.printStackTrace();
                     return false;
                 }
@@ -240,13 +239,13 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
 
         @Override
         protected void onPostExecute(final Boolean success) {
-            Log.i("XMPP", "On post execute " + success);
+            Utils.log("XMPP", "On post execute " + success);
             mAuthTask = null;
             showProgress(false);
             if (success) {
                 isLoggedIn = true;
                 // populate the navigation drawer
-                Log.i("XMPP", "USER: " + mUser);
+                Utils.log("XMPP", "USER: " + mUser);
                 mNavigationDrawerFragment.setUserData(mUser, "", BitmapFactory.decodeResource(getResources(), R.drawable.avatar));
 
                 multiUserChatManager = MultiUserChatManager.getInstanceFor(connection);
@@ -258,18 +257,27 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
 
                 try {
                     if (!multiUserChat.isJoined()) {
-                        Log.i("XMPP", "Trying to join muc");
+                        Utils.log("XMPP", "Trying to join muc");
                         multiUserChat.join(mUser, mPassword, histroy, SmackConfiguration.getDefaultPacketReplyTimeout());
 
                         multiUserChat.addMessageListener(new MessageListener() {
                             @Override
                             public void processMessage(Message message) {
-                                chatFragment.showMessage(false, message.getFrom(), message.getBody());
+                                String from = message.getFrom();
+                                String[] parts = from.split("/");
+                                if (parts.length > 1) {
+                                    from = parts[1];
+                                } else {
+                                    from = "";
+                                }
+                                Mensaje mensaje = new Mensaje(message.getBody(), from, from.equalsIgnoreCase(mUser));
+                                chatFragmentList.addMensaje(mensaje);
+//                                chatFragmentList.showMessage(false, message.getFrom(), message.getBody());
                             }
                         });
                     }
                 } catch (Exception e) {
-                    Log.i("XMPP", "Error joining muc");
+                    Utils.log("XMPP", "Error joining muc");
                     e.printStackTrace();
                 }
             } else {

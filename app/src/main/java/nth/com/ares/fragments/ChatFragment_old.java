@@ -20,7 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class ChatFragment extends Fragment {
+public class ChatFragment_old extends Fragment {
 
     MainActivity context;
 
@@ -42,7 +42,7 @@ public class ChatFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         context = (MainActivity) getActivity();
-        View view = inflater.inflate(R.layout.fragment_chat, container, false);
+        View view = inflater.inflate(R.layout.fragment_chat_list, container, false);
 
         roomName = Utils.getRoomName(context);
         roomService = Utils.getRoomService(context);
@@ -55,8 +55,8 @@ public class ChatFragment extends Fragment {
                 String texto = txtMensaje.getText().toString().trim();
                 if (!texto.equals("")) {
                     try {
-                        Log.i("XMPP", "Trying to send message");
-                        Log.i("XMPP", "Sending text [" + texto + "] to room [" + roomName + "]");
+                        Utils.log("XMPP", "Trying to send message");
+                        Utils.log("XMPP", "Sending text [" + texto + "] to room [" + roomName + "]");
                         Message message = new Message();
                         message.setType(Message.Type.groupchat);
                         message.setBody(texto);
@@ -66,9 +66,9 @@ public class ChatFragment extends Fragment {
                         showMessage(true, message.getFrom(), texto);
                         txtMensaje.setText("");
 
-                        Log.i("XMPP", "Message sent");
+                        Utils.log("XMPP", "Message sent");
                     } catch (Exception e) {
-                        Log.i("XMPP", "Error sending message");
+                        Utils.log("XMPP", "Error sending message");
                         e.printStackTrace();
                     }
                 }
@@ -133,7 +133,7 @@ public class ChatFragment extends Fragment {
 
                     layoutMessages.addView(txvChunk);
                 } else {
-                    Log.i("XMPP", "Typing");
+                    Utils.log("XMPP", "Typing");
                 }
             }
         });

@@ -9,6 +9,7 @@ import android.os.Vibrator;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -29,6 +30,10 @@ public class Utils {
     public final static int ROOMS_POS = 1;
     public final static int SETTINGS_POS = 2;
     public final static int LOGOUT_POS = 3;
+
+    /*
+    <div>Icons made by <a href="http://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a>             is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a></div>
+     */
 
     public static int getHistoryLength(MainActivity context) {
         SharedPreferences sharedPref = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
@@ -106,8 +111,12 @@ public class Utils {
         }
     }
 
-    public static void toast(String s, Context context) {
+    public static void toast(Context context, String s) {
         Toast.makeText(context, s, Toast.LENGTH_LONG).show();
+    }
+
+    public static void log(String cod, String text) {
+        Log.i(cod, text);
     }
 
     public static void vibrate(Context context) {
@@ -153,5 +162,10 @@ public class Utils {
         audio.setStreamVolume(AudioManager.STREAM_MUSIC, seventyVolume, 0);
         final MediaPlayer mp = MediaPlayer.create(context, sound);
         mp.start();
+    }
+
+    public static int pixels2dp(Context context, int pixels) {
+        float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (pixels * scale + 0.5f);
     }
 }

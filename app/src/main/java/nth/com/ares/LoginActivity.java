@@ -263,11 +263,11 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         @Override
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
-            Log.i("XMPP", "Trying to establish connection");
+            Utils.log("XMPP", "Trying to establish connection");
             if (connection == null) {
-                Log.i("XMPP", "Connection not null");
+                Utils.log("XMPP", "Connection not null");
                 try {
-                    Log.i("XMPP", "Try");
+                    Utils.log("XMPP", "Try");
                     XMPPTCPConnectionConfiguration config = XMPPTCPConnectionConfiguration.builder()
                             .setUsernameAndPassword(mUser, mPassword)
                             .setServiceName(Utils.SERVICE_NAME)
@@ -278,9 +278,9 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                     connection = new XMPPTCPConnection(config);
                     connection.connect();
                     connection.login();
-                    Log.i("XMPP", "LOGIN!! " + connection);
+                    Utils.log("XMPP", "LOGIN!! " + connection);
                 } catch (Exception e) {
-                    Log.i("XMPP", "Catch");
+                    Utils.log("XMPP", "Catch");
                     e.printStackTrace();
                 }
             }
@@ -289,7 +289,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
         @Override
         protected void onPostExecute(final Boolean success) {
-            Log.i("XMPP", "On post execute " + success);
+            Utils.log("XMPP", "On post execute " + success);
             mAuthTask = null;
             showProgress(false);
 

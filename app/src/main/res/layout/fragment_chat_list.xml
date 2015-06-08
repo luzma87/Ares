@@ -2,22 +2,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="nth.com.ares.fragments.ChatFragment"
+    tools:context="nth.com.ares.fragments.ChatFragmentList"
     android:id="@+id/layoutChat"
     android:layout_below="@+id/toolbar_actionbar">
 
-    <ScrollView
-        android:id="@+id/scrollViewMessages"
+    <TextView
+        android:id="@+id/empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/chat_sin_mensajes"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+    <ListView
+        android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
-        android:layout_above="@+id/layoutNewMessage">
-
-        <LinearLayout
-            android:id="@+id/layoutMessages"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </ScrollView>
+        android:layout_above="@+id/layoutNewMessage"
+        android:background="@color/myPrimaryLightColor" />
 
     <LinearLayout
         android:id="@+id/layoutNewMessage"
@@ -25,21 +28,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true">
+        android:layout_centerHorizontal="true"
+        android:background="@color/myPrimaryDarkColor">
 
         <EditText
             android:id="@+id/txtMensaje"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:inputType="textMultiLine"
-            android:ems="10"
             android:layout_weight="1" />
 
-        <Button
+        <ImageButton
             android:id="@+id/btnSend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Send"
-            android:layout_weight="1" />
+            android:src="@drawable/ic_send_message"
+            android:contentDescription="@string/enviar" />
+
     </LinearLayout>
 </RelativeLayout>
