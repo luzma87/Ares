@@ -20,6 +20,7 @@ import java.util.ArrayList;
 public class ChatFragmentList extends ListFragment {
 
     MainActivity context;
+    ChatFragmentList este;
 
     ImageButton btnSend;
     EditText txtMensaje;
@@ -33,10 +34,13 @@ public class ChatFragmentList extends ListFragment {
 
     ArrayList<Mensaje> mensajes;
 
+    ChatListArrayAdapter adapter;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         context = (MainActivity) getActivity();
+        este = this;
         View view = inflater.inflate(R.layout.fragment_chat_list, container, false);
 
         mensajes = new ArrayList<>();
@@ -62,6 +66,9 @@ public class ChatFragmentList extends ListFragment {
                         message.setTo(roomName);
                         context.multiUserChat.sendMessage(message);
 
+                        Mensaje mensaje = new Mensaje(context, texto, context.mUser, true);
+                        addMensaje(mensaje);
+
                         txtMensaje.setText("");
 
                         Utils.log("XMPP", "Message sent");
@@ -76,15 +83,23 @@ public class ChatFragmentList extends ListFragment {
         return view;
     }
 
-
-    public void addMensaje(Mensaje mensaje) {
-        mensajes.add(mensaje);
+    public void addMensaje(final Mensaje mensaje) {
+        Utils.log("CHAT TEST", "sender: " + mensaje.sender + "   body: " + mensaje.body + "  enviando: " + mensaje.enviando);
+        if (mensaje.sender != null && mensaje.body != null && !mensaje.body.trim().equals("")) {
+            context.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mensajes.add(mensaje);
+                    adapter.notifyDataSetChanged();
+                }
+            });
+        }
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        ChatListArrayAdapter adapter = new ChatListArrayAdapter(context, mensajes);
+        adapter = new ChatListArrayAdapter(context, mensajes);
         setListAdapter(adapter);
 
         chatListView = getListView();

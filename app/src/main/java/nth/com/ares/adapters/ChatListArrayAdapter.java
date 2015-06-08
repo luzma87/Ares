@@ -24,10 +24,11 @@ public class ChatListArrayAdapter extends ArrayAdapter<Mensaje> {
     static class ViewHolder {
         public TextView lblUser;
         public TextView lblMessage;
+        public View lblEmpty;
     }
 
     public ChatListArrayAdapter(Context context, ArrayList<Mensaje> mensajes) {
-        super(context, R.layout.chat_list_row, mensajes);
+        super(context, R.layout.fragment_chat_list_row, mensajes);
         this.context = context;
         this.mensajes = mensajes;
     }
@@ -38,11 +39,12 @@ public class ChatListArrayAdapter extends ArrayAdapter<Mensaje> {
         // reuse views
         if (rowView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            rowView = inflater.inflate(R.layout.chat_list_row, null);
+            rowView = inflater.inflate(R.layout.fragment_chat_list_row, null);
             // configure view holder
             ViewHolder viewHolder = new ViewHolder();
             viewHolder.lblUser = (TextView) rowView.findViewById(R.id.lbl_username);
             viewHolder.lblMessage = (TextView) rowView.findViewById(R.id.lbl_mns);
+            viewHolder.lblEmpty = rowView.findViewById(R.id.lbl_empty);
             rowView.setTag(viewHolder);
         }
 
@@ -55,22 +57,23 @@ public class ChatListArrayAdapter extends ArrayAdapter<Mensaje> {
         holder.lblUser.setText(from);
 
         LinearLayout.LayoutParams lpM = (LinearLayout.LayoutParams) holder.lblMessage.getLayoutParams();
-        LinearLayout.LayoutParams lpS = (LinearLayout.LayoutParams) holder.lblUser.getLayoutParams();
-        //Check whether message is mine to show green background and align to right
-        if (current.esMio) {
+        //Check whether message is mine to show blue background and align to right
+        if (current.esMio()) {
             holder.lblMessage.setBackgroundResource(R.drawable.bubble_mio);
             holder.lblMessage.setTextColor(context.getResources().getColor(R.color.mensaje_mio_text));
             holder.lblMessage.setPadding(Utils.pixels2dp(context, 5), Utils.pixels2dp(context, 5), Utils.pixels2dp(context, 15), Utils.pixels2dp(context, 5));
-            lpM.gravity = Gravity.RIGHT;
-            lpS.gravity = Gravity.RIGHT;
+            lpM.gravity = Gravity.END;
+            holder.lblUser.setVisibility(View.GONE);
+            holder.lblEmpty.setVisibility(View.VISIBLE);
         }
         //If not mine then it is from sender to show orange background and align to left
         else {
             holder.lblMessage.setBackgroundResource(R.drawable.bubble_recibe);
             holder.lblMessage.setTextColor(context.getResources().getColor(R.color.mensaje_recibe_text));
             holder.lblMessage.setPadding(Utils.pixels2dp(context, 15), Utils.pixels2dp(context, 5), Utils.pixels2dp(context, 5), Utils.pixels2dp(context, 5));
-            lpM.gravity = Gravity.LEFT;
-            lpS.gravity = Gravity.LEFT;
+            lpM.gravity = Gravity.START;
+            holder.lblUser.setVisibility(View.VISIBLE);
+            holder.lblEmpty.setVisibility(View.GONE);
         }
         holder.lblMessage.setLayoutParams(lpM);
         return rowView;

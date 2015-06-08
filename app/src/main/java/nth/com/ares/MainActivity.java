@@ -270,7 +270,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
                                 } else {
                                     from = "";
                                 }
-                                Mensaje mensaje = new Mensaje(message.getBody(), from, from.equalsIgnoreCase(mUser));
+                                Mensaje mensaje = new Mensaje(context, message.getBody(), from, false);
                                 chatFragmentList.addMensaje(mensaje);
 //                                chatFragmentList.showMessage(false, message.getFrom(), message.getBody());
                             }
