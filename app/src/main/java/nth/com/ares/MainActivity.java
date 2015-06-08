@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,10 +21,7 @@ import nth.com.ares.drawer.NavigationDrawerCallbacks;
 import nth.com.ares.drawer.NavigationDrawerFragment;
 import nth.com.ares.fragments.ChatFragmentList;
 import nth.com.ares.utils.Utils;
-import org.jivesoftware.smack.AbstractXMPPConnection;
-import org.jivesoftware.smack.ConnectionConfiguration;
-import org.jivesoftware.smack.MessageListener;
-import org.jivesoftware.smack.SmackConfiguration;
+import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
@@ -41,8 +37,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
      */
     private NavigationDrawerFragment mNavigationDrawerFragment;
     private Toolbar mToolbar;
-
-    private Boolean isLoggedIn = false;
 
     private UserLoginTask mAuthTask = null;
 
@@ -112,7 +106,11 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
                 editor.putString(getString(R.string.saved_user), "");
                 editor.putString(getString(R.string.saved_pass), "");
                 editor.apply();
-                isLoggedIn = false;
+
+                if (connection != null) {
+                    connection.disconnect();
+                }
+
                 Intent intent = new Intent(context, LoginActivity.class);
                 startActivity(intent);
                 break;
@@ -243,7 +241,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
             mAuthTask = null;
             showProgress(false);
             if (success) {
-                isLoggedIn = true;
                 // populate the navigation drawer
                 Utils.log("XMPP", "USER: " + mUser);
                 mNavigationDrawerFragment.setUserData(mUser, "", BitmapFactory.decodeResource(getResources(), R.drawable.avatar));
@@ -275,13 +272,15 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
 //                                chatFragmentList.showMessage(false, message.getFrom(), message.getBody());
                             }
                         });
+
+                        Utils.log("XMPP", "muc joined!!!");
                     }
                 } catch (Exception e) {
                     Utils.log("XMPP", "Error joining muc");
                     e.printStackTrace();
                 }
+                Utils.log("XMPP", "muc joined 2!!!");
             } else {
-                isLoggedIn = false;
                 Intent intent = new Intent(context, LoginActivity.class);
 //            String message = editText.getText().toString();
 //            intent.putExtra(EXTRA_MESSAGE, message);
