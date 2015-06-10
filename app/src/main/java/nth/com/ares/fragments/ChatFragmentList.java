@@ -39,6 +39,7 @@ public class ChatFragmentList extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+//        Utils.log("LZM-CH-FR", "ON CREATE VIEW START");
         context = (MainActivity) getActivity();
         este = this;
         View view = inflater.inflate(R.layout.fragment_chat_list, container, false);
@@ -55,9 +56,12 @@ public class ChatFragmentList extends ListFragment {
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+//                Utils.log("LZM-CH-FR", "BTN SEND: CLICK START");
                 String texto = txtMensaje.getText().toString().trim();
                 if (!texto.equals("")) {
+                    context.isDoneLoading = true;
                     try {
+//                        Utils.log("LZM-CH-FR", "TRYING TO SEND MESSAGE START");
                         Utils.log("XMPP", "Trying to send message");
                         Utils.log("XMPP", "Sending text [" + texto + "] to room [" + roomName + "]");
                         Message message = new Message();
@@ -72,33 +76,40 @@ public class ChatFragmentList extends ListFragment {
                         txtMensaje.setText("");
 
                         Utils.log("XMPP", "Message sent");
+//                        Utils.log("LZM-CH-FR", "TRYING TO SEND MESSAGE END");
                     } catch (Exception e) {
                         Utils.log("XMPP", "Error sending message");
                         e.printStackTrace();
                     }
                 }
+//                Utils.log("LZM-CH-FR", "BTN SEND: CLICK END");
             }
         });
-
+//        Utils.log("LZM-CH-FR", "ON CREATE VIEW END");
         return view;
     }
 
     public void addMensaje(final Mensaje mensaje) {
+//        Utils.log("LZM-CH-FR", "ADD MENSAJE START");
         Utils.log("CHAT TEST", "sender: " + mensaje.sender + "   body: " + mensaje.body + "  enviando: " + mensaje.enviando);
         if (mensaje.sender != null && mensaje.body != null && !mensaje.body.trim().equals("")) {
             context.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+//                    Utils.log("LZM-CH-FR", "ADD MENSAJE RUN ON UI THREAD START");
                     mensajes.add(mensaje);
                     adapter.notifyDataSetChanged();
+//                    Utils.log("LZM-CH-FR", "ADD MENSAJE RUN ON UI THREAD END");
                 }
             });
         }
+//        Utils.log("LZM-CH-FR", "ADD MENSAJE END");
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+//        Utils.log("LZM-CH-FR", "ON ACTIVITY CREATED START");
         adapter = new ChatListArrayAdapter(context, mensajes);
         setListAdapter(adapter);
 
@@ -115,6 +126,7 @@ public class ChatFragmentList extends ListFragment {
                 return true;
             }
         });
+//        Utils.log("LZM-CH-FR", "ON ACTIVITY CREATED END");
     }
 
 //    @Override

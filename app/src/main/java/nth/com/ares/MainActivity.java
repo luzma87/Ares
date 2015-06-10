@@ -19,6 +19,7 @@ import android.view.View;
 import nth.com.ares.classes.Mensaje;
 import nth.com.ares.drawer.NavigationDrawerCallbacks;
 import nth.com.ares.drawer.NavigationDrawerFragment;
+import nth.com.ares.fragments.ChatFragment;
 import nth.com.ares.fragments.ChatFragmentList;
 import nth.com.ares.utils.Utils;
 import org.jivesoftware.smack.*;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
     public MultiUserChatManager multiUserChatManager;
     public MultiUserChat multiUserChat;
 
+    public boolean isDoneLoading = false;
     public String mUser;
     String mPass;
 
@@ -51,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
 
     private MainActivity context;
 
-    ChatFragmentList chatFragmentList;
+    ChatFragment chatFragmentList;
 
     View mLayoutMain;
 
@@ -62,6 +64,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+//        Utils.log("LZM-MN-AC", "ON CREATE START");
 
         context = this;
 
@@ -87,13 +91,16 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
         // Set up the drawer.
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
         mNavigationDrawerFragment.setup(R.id.fragment_drawer, drawerLayout, mToolbar);
+
+//        Utils.log("LZM-MN-AC", "ON CREATE END");
     }
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
+//        Utils.log("LZM-MN-AC", "ON NAVGATION DRAWER ITEM SELECTED START");
         switch (position) {
             case Utils.CHAT_POS:
-                chatFragmentList = new ChatFragmentList();
+                chatFragmentList = new ChatFragment();
                 Utils.openFragment(context, chatFragmentList, getString(R.string.chat_title));
                 break;
             case Utils.ROOMS_POS:
@@ -101,20 +108,25 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
             case Utils.SETTINGS_POS:
                 break;
             case Utils.LOGOUT_POS:
-                SharedPreferences sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPref.edit();
-                editor.putString(getString(R.string.saved_user), "");
-                editor.putString(getString(R.string.saved_pass), "");
-                editor.apply();
-
-                if (connection != null) {
-                    connection.disconnect();
-                }
-
-                Intent intent = new Intent(context, LoginActivity.class);
-                startActivity(intent);
+                logout();
                 break;
         }
+//        Utils.log("LZM-MN-AC", "ON NAVGATION DRAWER ITEM SELECTED END");
+    }
+
+    public void logout() {
+        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(getString(R.string.saved_user), "");
+        editor.putString(getString(R.string.saved_pass), "");
+        editor.apply();
+
+        if (connection != null) {
+            connection.disconnect();
+        }
+
+        Intent intent = new Intent(context, LoginActivity.class);
+        startActivity(intent);
     }
 
     @Override
@@ -208,11 +220,13 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
 
         @Override
         protected Boolean doInBackground(Void... params) {
+//            Utils.log("LZM-MN-AC", "DO IN BACKGROUND START");
             // attempt authentication against a network service.
             Utils.log("XMPP", "Trying to establish connection: user=" + mUser + "  pass=" + mPassword);
             if (connection == null) {
                 Utils.log("XMPP", "Connection not null");
                 try {
+//                    Utils.log("LZM-MN-AC", "TRYING TO CONNECT START");
                     Utils.log("XMPP", "Try");
                     XMPPTCPConnectionConfiguration config = XMPPTCPConnectionConfiguration.builder()
                             .setUsernameAndPassword(mUser, mPassword)
@@ -224,11 +238,14 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
                     connection = new XMPPTCPConnection(config);
                     connection.connect();
                     connection.login();
+//                    Utils.log("LZM-MN-AC", "TRYING TO CONNECT END");
                     Utils.log("XMPP", "LOGIN!! " + connection);
                     return true;
                 } catch (Exception e) {
+//                    Utils.log("LZM-MN-AC", "ERROR CONNECTING");
                     Utils.log("XMPP", "Catch");
                     e.printStackTrace();
+                    logout();
                     return false;
                 }
             }
@@ -238,9 +255,11 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
         @Override
         protected void onPostExecute(final Boolean success) {
             Utils.log("XMPP", "On post execute " + success);
+//            Utils.log("LZM-MN-AC", "ON POST EXECUTE SUCCESS: " + success + " START");
             mAuthTask = null;
             showProgress(false);
             if (success) {
+//                Utils.log("LZM-MN-AC", "ON POST EXECUTE SUCCESS START");
                 // populate the navigation drawer
                 Utils.log("XMPP", "USER: " + mUser);
                 mNavigationDrawerFragment.setUserData(mUser, "", BitmapFactory.decodeResource(getResources(), R.drawable.avatar));
@@ -253,13 +272,16 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
                 histroy.setMaxStanzas(historyLength);
 
                 try {
+//                    Utils.log("LZM-MN-AC", "TRYING TO JOIN ROOM START");
                     if (!multiUserChat.isJoined()) {
+//                        Utils.log("LZM-MN-AC", "NOT JOINED START");
                         Utils.log("XMPP", "Trying to join muc");
                         multiUserChat.join(mUser, mPassword, histroy, SmackConfiguration.getDefaultPacketReplyTimeout());
 
                         multiUserChat.addMessageListener(new MessageListener() {
                             @Override
                             public void processMessage(Message message) {
+//                                Utils.log("LZM-MN-AC", "CHAT LISTENER START");
                                 String from = message.getFrom();
                                 String[] parts = from.split("/");
                                 if (parts.length > 1) {
@@ -268,24 +290,43 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
                                     from = "";
                                 }
                                 Mensaje mensaje = new Mensaje(context, message.getBody(), from, false);
-                                chatFragmentList.addMensaje(mensaje);
+                                if (mensaje.mostrar()) {
+//                                    chatFragmentList.addMensaje(mensaje);
+                                    chatFragmentList.showMessage(mensaje);
+                                }
+
+//                                if (isDoneLoading && !from.equalsIgnoreCase(mUser)) {
+                                Utils.vibrate(context);
+//                                }
+
+//                                Utils.log("LZM-MN-AC", "CHAT LISTENER END");
 //                                chatFragmentList.showMessage(false, message.getFrom(), message.getBody());
                             }
                         });
-
                         Utils.log("XMPP", "muc joined!!!");
+//                        Utils.log("LZM-MN-AC", "NOT JOINED END");
                     }
+//                    Utils.log("LZM-MN-AC", "TRYING TO JOIN ROOM END");
                 } catch (Exception e) {
+//                    Utils.log("LZM-MN-AC", "ERROR JOINING ROOM START");
                     Utils.log("XMPP", "Error joining muc");
                     e.printStackTrace();
+                    Utils.toast(context, getString(R.string.error_joining_room));
+                    logout();
+//                    Utils.log("LZM-MN-AC", "ERROR JOINING ROOM END");
                 }
                 Utils.log("XMPP", "muc joined 2!!!");
+//                Utils.log("LZM-MN-AC", "ON POST EXECUTE SUCCESS END");
             } else {
-                Intent intent = new Intent(context, LoginActivity.class);
+//                Utils.log("LZM-MN-AC", "ON POST EXECUTE FAIL START");
+                logout();
+//                Intent intent = new Intent(context, LoginActivity.class);
 //            String message = editText.getText().toString();
 //            intent.putExtra(EXTRA_MESSAGE, message);
-                startActivity(intent);
+//                startActivity(intent);
+//                Utils.log("LZM-MN-AC", "ON POST EXECUTE FAIL END");
             }
+//            Utils.log("LZM-MN-AC", "ON POST EXECUTE SUCCESS: " + success + " END");
         }
 
         @Override

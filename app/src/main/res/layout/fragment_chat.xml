@@ -10,7 +10,8 @@
         android:id="@+id/scrollViewMessages"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
-        android:layout_above="@+id/layoutNewMessage">
+        android:layout_above="@+id/layoutNewMessage"
+        android:background="@color/myPrimaryLightColor">
 
         <LinearLayout
             android:id="@+id/layoutMessages"
@@ -25,21 +26,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true">
+        android:layout_centerHorizontal="true"
+        android:background="@color/myPrimaryDarkColor">
 
         <EditText
             android:id="@+id/txtMensaje"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:inputType="textMultiLine"
-            android:ems="10"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:textColor="@color/mensaje_mio_text" />
 
-        <Button
+        <ImageButton
             android:id="@+id/btnSend"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Send"
-            android:layout_weight="1" />
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:src="@drawable/ic_send_message"
+            android:contentDescription="@string/enviar" />
+
     </LinearLayout>
 </RelativeLayout>

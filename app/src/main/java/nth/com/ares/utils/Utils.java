@@ -22,9 +22,9 @@ import nth.com.ares.R;
  */
 public class Utils {
 
-    public final static String SERVER_HOST = "192.168.1.132";
+    public final static String SERVER_HOST = "167.114.144.175";
     public final static int SERVER_PORT = 5222;
-    public final static String SERVICE_NAME = "svt-pc";
+    public final static String SERVICE_NAME = "vps44751.vps.ovh.ca";
 
     public final static int CHAT_POS = 0;
     public final static int ROOMS_POS = 1;
@@ -33,6 +33,9 @@ public class Utils {
 
     /*
     <div>Icons made by <a href="http://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a>             is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a></div>
+    <div>Icons made by <a href="http://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a>             is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a></div>
+    <div>Icons made by <a href="http://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a>             is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a></div>
+    <div>Icons made by <a href="http://www.flaticon.com/authors/nice-and-serious" title="Nice and Serious">Nice and Serious</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a>             is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a></div>
      */
 
     public static int getHistoryLength(MainActivity context) {

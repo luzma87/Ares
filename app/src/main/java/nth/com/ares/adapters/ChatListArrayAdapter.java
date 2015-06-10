@@ -35,6 +35,9 @@ public class ChatListArrayAdapter extends ArrayAdapter<Mensaje> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        Mensaje current = mensajes.get(position);
+        Utils.log("LZM-LS_AD", "****************************************************************************************");
+        Utils.log("LZM-LS_AD", "GET VIEW START: " + current.sender + ": " + current.body);
         View rowView = convertView;
         // reuse views
         if (rowView == null) {
@@ -50,32 +53,40 @@ public class ChatListArrayAdapter extends ArrayAdapter<Mensaje> {
 
         // fill data
         ViewHolder holder = (ViewHolder) rowView.getTag();
-        Mensaje current = mensajes.get(position);
-        String mns = current.body;
-        holder.lblMessage.setText(mns);
-        String from = current.sender;
-        holder.lblUser.setText(from);
+        Utils.log("LZM-LS_AD", "GET VIEW CURRENT: " + current.sender + ": " + current.body + " MOSTRAR? " + current.mostrar());
+        if (current.mostrar()) {
+            Utils.log("LZM-LS_AD", "MOSTRANDO MENSAJE START: " + current.sender + ": " + current.body);
+            String mns = current.body;
+            holder.lblMessage.setText(mns);
+            String from = current.sender;
+            holder.lblUser.setText(from);
 
-        LinearLayout.LayoutParams lpM = (LinearLayout.LayoutParams) holder.lblMessage.getLayoutParams();
-        //Check whether message is mine to show blue background and align to right
-        if (current.esMio()) {
-            holder.lblMessage.setBackgroundResource(R.drawable.bubble_mio);
-            holder.lblMessage.setTextColor(context.getResources().getColor(R.color.mensaje_mio_text));
-            holder.lblMessage.setPadding(Utils.pixels2dp(context, 5), Utils.pixels2dp(context, 5), Utils.pixels2dp(context, 15), Utils.pixels2dp(context, 5));
-            lpM.gravity = Gravity.END;
-            holder.lblUser.setVisibility(View.GONE);
-            holder.lblEmpty.setVisibility(View.VISIBLE);
+            LinearLayout.LayoutParams lpM = (LinearLayout.LayoutParams) holder.lblMessage.getLayoutParams();
+            //Check whether message is mine to show blue background and align to right
+            if (current.esMio()) {
+                Utils.log("LZM-LS_AD", "MENSAJE ES MIO: " + current.sender + ": " + current.body);
+                holder.lblMessage.setBackgroundResource(R.drawable.bubble_mio);
+                holder.lblMessage.setTextColor(context.getResources().getColor(R.color.mensaje_mio_text));
+                holder.lblMessage.setPadding(Utils.pixels2dp(context, 5), Utils.pixels2dp(context, 5), Utils.pixels2dp(context, 15), Utils.pixels2dp(context, 5));
+                lpM.gravity = Gravity.END;
+                holder.lblUser.setVisibility(View.GONE);
+                holder.lblEmpty.setVisibility(View.VISIBLE);
+            }
+            //If not mine then it is from sender to show orange background and align to left
+            else {
+                Utils.log("LZM-LS_AD", "MENSAJE NO ES MIO: " + current.sender + ": " + current.body);
+                holder.lblMessage.setBackgroundResource(R.drawable.bubble_recibe);
+                holder.lblMessage.setTextColor(context.getResources().getColor(R.color.mensaje_recibe_text));
+                holder.lblMessage.setPadding(Utils.pixels2dp(context, 15), Utils.pixels2dp(context, 5), Utils.pixels2dp(context, 5), Utils.pixels2dp(context, 5));
+                lpM.gravity = Gravity.START;
+                holder.lblUser.setVisibility(View.VISIBLE);
+                holder.lblEmpty.setVisibility(View.GONE);
+            }
+            holder.lblMessage.setLayoutParams(lpM);
+            Utils.log("LZM-LS_AD", "MOSTRANDO MENSAJE END: " + current.sender + ": " + current.body);
         }
-        //If not mine then it is from sender to show orange background and align to left
-        else {
-            holder.lblMessage.setBackgroundResource(R.drawable.bubble_recibe);
-            holder.lblMessage.setTextColor(context.getResources().getColor(R.color.mensaje_recibe_text));
-            holder.lblMessage.setPadding(Utils.pixels2dp(context, 15), Utils.pixels2dp(context, 5), Utils.pixels2dp(context, 5), Utils.pixels2dp(context, 5));
-            lpM.gravity = Gravity.START;
-            holder.lblUser.setVisibility(View.VISIBLE);
-            holder.lblEmpty.setVisibility(View.GONE);
-        }
-        holder.lblMessage.setLayoutParams(lpM);
+        Utils.log("LZM-LS_AD", "GET VIEW END: " + current.sender + ": " + current.body);
+        Utils.log("LZM-LS_AD", "****************************************************************************************");
         return rowView;
     }
 

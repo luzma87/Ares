@@ -38,7 +38,8 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:inputType="textMultiLine"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:textColor="@color/mensaje_mio_text" />
 
         <ImageButton
             android:id="@+id/btnSend"
