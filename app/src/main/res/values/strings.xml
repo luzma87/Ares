@@ -8,4 +8,7 @@
     <string name="enviar">Enviar</string>
     <string name="chat_sin_mensajes">No hay mensajes que mostrar</string>
     <string name="error_joining_room">Ha ocurrido un error al unirse al grupo</string>
+    <string name="asalto">Asalto</string>
+    <string name="accidente">Accidente</string>
+    <string name="ambulancia">Ambulancia</string>
 </resources>

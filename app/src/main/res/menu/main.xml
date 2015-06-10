@@ -1,8 +1,24 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <!--<item-->
+    <!--android:id="@+id/action_login"-->
+    <!--android:title="login" />-->
+    <!--<item-->
+    <!--android:id="@+id/action_logout"-->
+    <!--android:title="logout" />-->
     <item
-        android:id="@+id/action_login"
-        android:title="login" />
+        android:id="@+id/action_asalto"
+        android:title="@string/asalto"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_asalto" />
     <item
-        android:id="@+id/action_logout"
-        android:title="logout" />
+        android:id="@+id/action_accidente"
+        android:title="@string/accidente"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_side_crash" />
+    <item
+        android:id="@+id/action_ambulancia"
+        android:title="@string/ambulancia"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_ambulance" />
 </menu>
