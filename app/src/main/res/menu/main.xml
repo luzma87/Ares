@@ -12,6 +12,11 @@
         app:showAsAction="always"
         android:icon="@drawable/ic_asalto" />
     <item
+        android:id="@+id/action_ubicacion"
+        android:title="@string/ubicacion"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_location_map" />
+    <item
         android:id="@+id/action_accidente"
         android:title="@string/accidente"
         app:showAsAction="ifRoom"

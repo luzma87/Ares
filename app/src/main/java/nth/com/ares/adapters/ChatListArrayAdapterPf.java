@@ -9,7 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import nth.com.ares.R;
-import nth.com.ares.classes.Mensaje;
+import nth.com.ares.domains.Mensaje;
 import nth.com.ares.utils.Utils;
 
 import java.util.ArrayList;

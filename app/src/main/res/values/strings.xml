@@ -11,4 +11,7 @@
     <string name="asalto">Asalto</string>
     <string name="accidente">Accidente</string>
     <string name="ambulancia">Ambulancia</string>
+    <string name="ubicacion">Enviar mi ubicación</string>
+    <string name="espere">Espere...</string>
+    <string name="calculando_ubicacion">Calculando ubicación</string>
 </resources>

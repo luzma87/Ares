@@ -1,4 +1,4 @@
-package nth.com.ares.classes;
+package nth.com.ares.domains;
 
 /**
  * Created by LUZ on 07-Jun-15.

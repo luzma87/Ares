@@ -1,4 +1,4 @@
-package nth.com.ares.classes;
+package nth.com.ares.domains;
 
 import nth.com.ares.MainActivity;
 import nth.com.ares.utils.Utils;

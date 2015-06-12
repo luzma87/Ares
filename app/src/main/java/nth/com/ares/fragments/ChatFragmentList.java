@@ -2,8 +2,6 @@ package nth.com.ares.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +9,7 @@ import android.widget.*;
 import nth.com.ares.MainActivity;
 import nth.com.ares.R;
 import nth.com.ares.adapters.ChatListArrayAdapter;
-import nth.com.ares.classes.Mensaje;
+import nth.com.ares.domains.Mensaje;
 import nth.com.ares.utils.Utils;
 import org.jivesoftware.smack.packet.Message;
 

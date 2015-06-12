@@ -1,12 +1,9 @@
 package nth.com.ares.fragments;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
-import android.util.Log;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,14 +11,9 @@ import android.view.ViewGroup;
 import android.widget.*;
 import nth.com.ares.MainActivity;
 import nth.com.ares.R;
-import nth.com.ares.classes.Mensaje;
+import nth.com.ares.domains.Mensaje;
 import nth.com.ares.utils.Utils;
 import org.jivesoftware.smack.packet.Message;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 public class ChatFragment extends Fragment {
 
@@ -41,6 +33,29 @@ public class ChatFragment extends Fragment {
     String roomService;
     String serviceName;
 
+    private void sendMessage() {
+        String texto = txtMensaje.getText().toString().trim();
+        if (!texto.equals("")) {
+            try {
+                Utils.log("XMPP", "Trying to send message");
+                Utils.log("XMPP", "Sending text [" + texto + "] to room [" + roomName + "]");
+                Message message = new Message();
+                message.setType(Message.Type.groupchat);
+                message.setBody(texto);
+                message.setTo(roomName);
+                context.multiUserChat.sendMessage(message);
+
+                showMessage(true, message.getFrom(), texto);
+                txtMensaje.setText("");
+
+                Utils.log("XMPP", "Message sent");
+            } catch (Exception e) {
+                Utils.log("XMPP", "Error sending message");
+                e.printStackTrace();
+            }
+        }
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -55,26 +70,7 @@ public class ChatFragment extends Fragment {
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String texto = txtMensaje.getText().toString().trim();
-                if (!texto.equals("")) {
-                    try {
-                        Utils.log("XMPP", "Trying to send message");
-                        Utils.log("XMPP", "Sending text [" + texto + "] to room [" + roomName + "]");
-                        Message message = new Message();
-                        message.setType(Message.Type.groupchat);
-                        message.setBody(texto);
-                        message.setTo(roomName);
-                        context.multiUserChat.sendMessage(message);
-
-                        showMessage(true, message.getFrom(), texto);
-                        txtMensaje.setText("");
-
-                        Utils.log("XMPP", "Message sent");
-                    } catch (Exception e) {
-                        Utils.log("XMPP", "Error sending message");
-                        e.printStackTrace();
-                    }
-                }
+                sendMessage();
             }
         });
 
@@ -217,6 +213,12 @@ public class ChatFragment extends Fragment {
         String mns = mensaje.body;
         Boolean mio = mensaje.esMio();
         showMessage(mio, sender, mns);
+    }
+
+    public void setMessage(String message) {
+        txtMensaje.setText(message);
+        txtMensaje.setSelection(txtMensaje.getText().length());
+        sendMessage();
     }
 
 }

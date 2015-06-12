@@ -3,10 +3,12 @@ package nth.com.ares;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,11 +18,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import nth.com.ares.classes.Mensaje;
+import com.google.android.gms.common.api.GoogleApiClient;
+import nth.com.ares.classes.MyLocation;
+import nth.com.ares.domains.Mensaje;
 import nth.com.ares.drawer.NavigationDrawerCallbacks;
 import nth.com.ares.drawer.NavigationDrawerFragment;
 import nth.com.ares.fragments.ChatFragment;
-import nth.com.ares.fragments.ChatFragmentList;
 import nth.com.ares.utils.Utils;
 import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.packet.Message;
@@ -60,6 +63,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
     int historyLength;
 
     DrawerLayout drawerLayout;
+
+    ProgressDialog progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
+        int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
 //        if (id == R.id.action_login) {
@@ -164,6 +169,25 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
 //            mNavigationDrawerFragment.logout();
 //            return true;
 //        }
+        if (id == R.id.action_asalto) {
+            chatFragmentList.setMessage("Asalto! Necesito ayuda!");
+        } else if (id == R.id.action_ubicacion) {
+            progress = ProgressDialog.show(this, getString(R.string.espere), getString(R.string.calculando_ubicacion), true);
+            MyLocation.LocationResult locationResult = new MyLocation.LocationResult() {
+                @Override
+                public void gotLocation(Location location) {
+                    //Got the location!
+                    chatFragmentList.setMessage("loc:" + location.getLatitude() + "," + location.getLongitude());
+                    progress.dismiss();
+                }
+            };
+            MyLocation myLocation = new MyLocation();
+            myLocation.getLocation(this, locationResult);
+        } else if (id == R.id.action_accidente) {
+            chatFragmentList.setMessage("Accidente! Necesito ayuda!");
+        } else if (id == R.id.action_ambulancia) {
+            chatFragmentList.setMessage("Necesito una ambulancia!");
+        }
 
         return super.onOptionsItemSelected(item);
     }
