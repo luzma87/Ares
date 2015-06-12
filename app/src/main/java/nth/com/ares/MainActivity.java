@@ -3,15 +3,23 @@ package nth.com.ares;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.location.Location;
+import android.media.AudioManager;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -65,6 +73,9 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
     DrawerLayout drawerLayout;
 
     ProgressDialog progress;
+
+    NotificationCompat.Builder mBuilder;
+    int mNotificationId = 001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -307,20 +318,73 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
                             public void processMessage(Message message) {
 //                                Utils.log("LZM-MN-AC", "CHAT LISTENER START");
                                 String from = message.getFrom();
+                                String body = message.getBody();
                                 String[] parts = from.split("/");
                                 if (parts.length > 1) {
                                     from = parts[1];
                                 } else {
                                     from = "";
                                 }
-                                Mensaje mensaje = new Mensaje(context, message.getBody(), from, false);
+                                Mensaje mensaje = new Mensaje(context, body, from, false);
                                 if (mensaje.mostrar()) {
 //                                    chatFragmentList.addMensaje(mensaje);
                                     chatFragmentList.showMessage(mensaje);
                                 }
 
 //                                if (isDoneLoading && !from.equalsIgnoreCase(mUser)) {
-                                Utils.vibrate(context);
+//                                if (isDoneLoading) {
+//                                Utils.vibrate(context);
+//                                Utils.log("LZM", "from=" + from + "   mUser=" + mUser);
+                                if (!from.equalsIgnoreCase(mUser)) {
+
+                                    // Start immediately, Vibrate for 200 milliseconds, Sleep for 500 milliseconds
+                                    long[] pattern = {0, 200, 500};
+
+                                    //Define sound URI
+                                    //default sound
+//                                    Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+//                                    notification.defaults |= Notification.DEFAULT_SOUND;
+                                    //default vibrate
+//                                    Notification.DEFAULT_VIBRATE;
+//                                    notification.defaults |= Notification.DEFAULT_VIBRATE;
+                                    Uri soundUri = Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.popup_notification);
+
+                                    mBuilder =
+                                            new NotificationCompat.Builder(context)
+                                                    .setSmallIcon(R.drawable.notification_icon)
+                                                    .setVibrate(pattern)
+                                                    .setSound(soundUri, AudioManager.STREAM_NOTIFICATION)
+                                                    .setLights(Color.BLUE, 500, 500)
+                                                    .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                                                    .setPriority(NotificationCompat.PRIORITY_MAX)
+                                                    .setContentTitle(from)
+                                                    .setStyle(new NotificationCompat.InboxStyle())
+                                                    .setContentText(body);
+
+                                    // Creates an explicit intent for an Activity in your app
+                                    Intent resultIntent = new Intent(context, MainActivity.class);
+                                    // The stack builder object will contain an artificial back stack for the
+                                    // started Activity.
+                                    // This ensures that navigating backward from the Activity leads out of
+                                    // your application to the Home screen.
+                                    TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+                                    // Adds the back stack for the Intent (but not the Intent itself)
+                                    stackBuilder.addParentStack(MainActivity.class);
+                                    // Adds the Intent that starts the Activity to the top of the stack
+                                    stackBuilder.addNextIntent(resultIntent);
+                                    PendingIntent resultPendingIntent =
+                                            stackBuilder.getPendingIntent(
+                                                    0,
+                                                    PendingIntent.FLAG_UPDATE_CURRENT
+                                            );
+                                    mBuilder.setContentIntent(resultPendingIntent);
+
+                                    // Gets an instance of the NotificationManager service
+                                    NotificationManager mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                                    // Builds the notification and issues it.
+                                    mNotifyMgr.notify(mNotificationId, mBuilder.build());
+                                }
+//                                }
 //                                }
 
 //                                Utils.log("LZM-MN-AC", "CHAT LISTENER END");
