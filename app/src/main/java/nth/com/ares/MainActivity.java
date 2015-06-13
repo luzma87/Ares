@@ -32,6 +32,7 @@ import nth.com.ares.domains.Mensaje;
 import nth.com.ares.drawer.NavigationDrawerCallbacks;
 import nth.com.ares.drawer.NavigationDrawerFragment;
 import nth.com.ares.fragments.ChatFragment;
+import nth.com.ares.services.ChatService;
 import nth.com.ares.utils.Utils;
 import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.packet.Message;
@@ -95,6 +96,10 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
         String defaultPass = "";
         mUser = sharedPref.getString(getString(R.string.saved_user), defaultUser);
         mPass = sharedPref.getString(getString(R.string.saved_pass), defaultPass);
+
+        Intent intent = new Intent(this, ChatService.class);
+        startService(intent);
+
         mAuthTask = new UserLoginTask(mUser, mPass);
         mAuthTask.execute((Void) null);
         mToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
@@ -119,8 +124,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
                 chatFragmentList = new ChatFragment();
                 Utils.openFragment(context, chatFragmentList, getString(R.string.chat_title));
                 break;
-            case Utils.ROOMS_POS:
-                break;
             case Utils.SETTINGS_POS:
                 break;
             case Utils.LOGOUT_POS:
@@ -131,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
     }
 
     public void logout() {
+        Utils.log("CAHT", "LOGGING OUT");
         SharedPreferences sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(getString(R.string.saved_user), "");

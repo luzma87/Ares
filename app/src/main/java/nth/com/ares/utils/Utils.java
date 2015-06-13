@@ -27,13 +27,13 @@ public class Utils {
     public final static String SERVICE_NAME = "vps44751.vps.ovh.ca";
 
     public final static int CHAT_POS = 0;
-    public final static int ROOMS_POS = 1;
-    public final static int SETTINGS_POS = 2;
-    public final static int LOGOUT_POS = 3;
+    public final static int SETTINGS_POS = 1;
+    public final static int LOGOUT_POS = 2;
 
     /*
     <div>Icons made by <a href="http://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a>             is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a></div>
     <div>Icons made by <a href="http://www.flaticon.com/authors/nice-and-serious" title="Nice and Serious">Nice and Serious</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a>             is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a></div>
+    <div>Icons made by <a href="http://www.flaticon.com/authors/ocha" title="OCHA">OCHA</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a>             is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a></div>
 
     icono
     <a href='http://www.freepik.com/free-vector/metallic-shield_794455.htm'>Designed by Freepik</a>

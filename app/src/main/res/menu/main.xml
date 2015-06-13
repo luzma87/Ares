@@ -10,7 +10,7 @@
         android:id="@+id/action_asalto"
         android:title="@string/asalto"
         app:showAsAction="always"
-        android:icon="@drawable/ic_asalto" />
+        android:icon="@drawable/ic_thief_robbing" />
     <item
         android:id="@+id/action_ubicacion"
         android:title="@string/ubicacion"
