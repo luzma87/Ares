@@ -157,12 +157,22 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
     protected void onStop() {
         super.onStop();
         Utils.log("LZM_ACTIVITY", "ON STOP");
+
+        if (!isMyServiceRunning(ChatService.class)) {
+            Intent intent = new Intent(this, ChatService.class);
+            startService(intent);
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         Utils.log("LZM_ACTIVITY", "ON DESTROY");
+
+        if (!isMyServiceRunning(ChatService.class)) {
+            Intent intent = new Intent(this, ChatService.class);
+            startService(intent);
+        }
     }
 
     @Override
