@@ -39,19 +39,19 @@ public class Utils {
     <a href='http://www.freepik.com/free-vector/metallic-shield_794455.htm'>Designed by Freepik</a>
      */
 
-    public static int getHistoryLength(MainActivity context) {
+    public static int getHistoryLength(Context context) {
         SharedPreferences sharedPref = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
         int defaultLength = 20;
         return sharedPref.getInt(context.getString(R.string.history_length), defaultLength);
     }
 
-    public static String getRoomName(MainActivity context) {
+    public static String getRoomName(Context context) {
         SharedPreferences sharedPref = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
         String defaultName = "Jipijapa";
         return sharedPref.getString(context.getString(R.string.room_name), defaultName);
     }
 
-    public static String getRoomService(MainActivity context) {
+    public static String getRoomService(Context context) {
         SharedPreferences sharedPref = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
         String defaultService = "conference";
         return sharedPref.getString(context.getString(R.string.room_service), defaultService);

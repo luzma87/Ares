@@ -68,8 +68,8 @@ public class ChatFragmentList extends ListFragment {
                         message.setTo(roomName);
                         context.multiUserChat.sendMessage(message);
 
-                        Mensaje mensaje = new Mensaje(context, texto, context.mUser, true);
-                        addMensaje(mensaje);
+//                        Mensaje mensaje = new Mensaje(context, texto, context.mUser, true);
+//                        addMensaje(mensaje);
 
                         txtMensaje.setText("");
 

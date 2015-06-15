@@ -3,6 +3,7 @@ package nth.com.ares;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.ActivityManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
@@ -13,6 +14,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
 import android.media.AudioManager;
+import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -38,9 +40,13 @@ import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
+import org.jivesoftware.smackx.delay.packet.DelayInformation;
 import org.jivesoftware.smackx.muc.DiscussionHistory;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
+
+import java.text.DateFormat;
+import java.util.Date;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationDrawerCallbacks {
@@ -78,6 +84,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
     NotificationCompat.Builder mBuilder;
     int mNotificationId = 001;
 
+    DateFormat dateFormat;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,9 +105,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
         mUser = sharedPref.getString(getString(R.string.saved_user), defaultUser);
         mPass = sharedPref.getString(getString(R.string.saved_pass), defaultPass);
 
-        Intent intent = new Intent(this, ChatService.class);
-        startService(intent);
-
         mAuthTask = new UserLoginTask(mUser, mPass);
         mAuthTask.execute((Void) null);
         mToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
@@ -113,7 +118,51 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
         mNavigationDrawerFragment.setup(R.id.fragment_drawer, drawerLayout, mToolbar);
 
+        dateFormat = android.text.format.DateFormat.getDateFormat(getApplicationContext());
+
 //        Utils.log("LZM-MN-AC", "ON CREATE END");
+        Utils.log("LZM_ACTIVITY", "ON CREATE");
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Utils.log("LZM_ACTIVITY", "ON START");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Utils.log("LZM_ACTIVITY", "ON RESUME");
+
+        if (isMyServiceRunning(ChatService.class)) {
+            Intent serviceIntent = new Intent(ChatService.class.getName());
+            serviceIntent.setPackage("com.android.vending");
+            stopService(serviceIntent);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Utils.log("LZM_ACTIVITY", "ON PAUSE");
+
+        if (!isMyServiceRunning(ChatService.class)) {
+            Intent intent = new Intent(this, ChatService.class);
+            startService(intent);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Utils.log("LZM_ACTIVITY", "ON STOP");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Utils.log("LZM_ACTIVITY", "ON DESTROY");
     }
 
     @Override
@@ -186,25 +235,44 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
 //        }
         if (id == R.id.action_asalto) {
             chatFragmentList.setMessage("Asalto! Necesito ayuda!");
+            sendMyLoc();
         } else if (id == R.id.action_ubicacion) {
-            progress = ProgressDialog.show(this, getString(R.string.espere), getString(R.string.calculando_ubicacion), true);
-            MyLocation.LocationResult locationResult = new MyLocation.LocationResult() {
-                @Override
-                public void gotLocation(Location location) {
-                    //Got the location!
-                    chatFragmentList.setMessage("loc:" + location.getLatitude() + "," + location.getLongitude());
-                    progress.dismiss();
-                }
-            };
-            MyLocation myLocation = new MyLocation();
-            myLocation.getLocation(this, locationResult);
+            sendMyLoc();
         } else if (id == R.id.action_accidente) {
             chatFragmentList.setMessage("Accidente! Necesito ayuda!");
+            sendMyLoc();
         } else if (id == R.id.action_ambulancia) {
             chatFragmentList.setMessage("Necesito una ambulancia!");
+            sendMyLoc();
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void sendMyLoc() {
+        progress = ProgressDialog.show(this, getString(R.string.espere), getString(R.string.calculando_ubicacion), true);
+        MyLocation.LocationResult locationResult = new MyLocation.LocationResult() {
+            @Override
+            public void gotLocation(Location location) {
+                //Got the location!
+                chatFragmentList.setMessage("loc:" + location.getLatitude() + "," + location.getLongitude());
+                progress.dismiss();
+            }
+        };
+        MyLocation myLocation = new MyLocation();
+        myLocation.getLocation(this, locationResult);
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                Utils.log("SERVICE", "RUNNING!!!!");
+                return true;
+            }
+        }
+        Utils.log("SERVICE", "STOPPED");
+        return false;
     }
 
     /**
@@ -321,6 +389,23 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
                             @Override
                             public void processMessage(Message message) {
 //                                Utils.log("LZM-MN-AC", "CHAT LISTENER START");
+
+                                DelayInformation inf = null;
+                                Date date;
+
+                                try {
+                                    inf = (DelayInformation) message.getExtension("urn:xmpp:delay");
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
+                                if (inf != null) {
+                                    date = inf.getStamp();
+                                    //println "stored "+date
+                                } else {
+                                    date = new Date();
+                                }
+                                String df = android.text.format.DateFormat.format("dd-MM-yy HH:mm:ss", date).toString();
                                 String from = message.getFrom();
                                 String body = message.getBody();
                                 String[] parts = from.split("/");
@@ -329,65 +414,77 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
                                 } else {
                                     from = "";
                                 }
-                                Mensaje mensaje = new Mensaje(context, body, from, false);
+
+//                                Utils.log("MSG", from + ": " + body + " (" + date + ")   -   " + df);
+
+                                Mensaje mensaje = new Mensaje(context, body, from, df, false);
                                 if (mensaje.mostrar()) {
 //                                    chatFragmentList.addMensaje(mensaje);
                                     chatFragmentList.showMessage(mensaje);
                                 }
 
+//                                try {
+////                                    Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+//                                    Uri notification = Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.popup_notification);
+//                                    Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+//                                    r.play();
+//                                } catch (Exception e) {
+//                                    e.printStackTrace();
+//                                }
+
 //                                if (isDoneLoading && !from.equalsIgnoreCase(mUser)) {
 //                                if (isDoneLoading) {
 //                                Utils.vibrate(context);
 //                                Utils.log("LZM", "from=" + from + "   mUser=" + mUser);
-                                if (!from.equalsIgnoreCase(mUser)) {
-
-                                    // Start immediately, Vibrate for 200 milliseconds, Sleep for 500 milliseconds
-                                    long[] pattern = {0, 200, 500};
-
-                                    //Define sound URI
-                                    //default sound
-//                                    Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-//                                    notification.defaults |= Notification.DEFAULT_SOUND;
-                                    //default vibrate
-//                                    Notification.DEFAULT_VIBRATE;
-//                                    notification.defaults |= Notification.DEFAULT_VIBRATE;
-                                    Uri soundUri = Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.popup_notification);
-
-                                    mBuilder =
-                                            new NotificationCompat.Builder(context)
-                                                    .setSmallIcon(R.drawable.notification_icon)
-                                                    .setVibrate(pattern)
-                                                    .setSound(soundUri, AudioManager.STREAM_NOTIFICATION)
-                                                    .setLights(Color.BLUE, 500, 500)
-                                                    .setCategory(NotificationCompat.CATEGORY_MESSAGE)
-                                                    .setPriority(NotificationCompat.PRIORITY_MAX)
-                                                    .setContentTitle(from)
-                                                    .setStyle(new NotificationCompat.InboxStyle())
-                                                    .setContentText(body);
-
-                                    // Creates an explicit intent for an Activity in your app
-                                    Intent resultIntent = new Intent(context, MainActivity.class);
-                                    // The stack builder object will contain an artificial back stack for the
-                                    // started Activity.
-                                    // This ensures that navigating backward from the Activity leads out of
-                                    // your application to the Home screen.
-                                    TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-                                    // Adds the back stack for the Intent (but not the Intent itself)
-                                    stackBuilder.addParentStack(MainActivity.class);
-                                    // Adds the Intent that starts the Activity to the top of the stack
-                                    stackBuilder.addNextIntent(resultIntent);
-                                    PendingIntent resultPendingIntent =
-                                            stackBuilder.getPendingIntent(
-                                                    0,
-                                                    PendingIntent.FLAG_UPDATE_CURRENT
-                                            );
-                                    mBuilder.setContentIntent(resultPendingIntent);
-
-                                    // Gets an instance of the NotificationManager service
-                                    NotificationManager mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                                    // Builds the notification and issues it.
-                                    mNotifyMgr.notify(mNotificationId, mBuilder.build());
-                                }
+//                                if (!from.equalsIgnoreCase(mUser)) {
+//
+//                                    // Start immediately, Vibrate for 200 milliseconds, Sleep for 500 milliseconds
+//                                    long[] pattern = {0, 200, 500};
+//
+//                                    //Define sound URI
+//                                    //default sound
+////                                    Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+////                                    notification.defaults |= Notification.DEFAULT_SOUND;
+//                                    //default vibrate
+////                                    Notification.DEFAULT_VIBRATE;
+////                                    notification.defaults |= Notification.DEFAULT_VIBRATE;
+//                                    Uri soundUri = Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.popup_notification);
+//
+//                                    mBuilder =
+//                                            new NotificationCompat.Builder(context)
+//                                                    .setSmallIcon(R.drawable.notification_icon)
+//                                                    .setVibrate(pattern)
+//                                                    .setSound(soundUri, AudioManager.STREAM_NOTIFICATION)
+//                                                    .setLights(Color.BLUE, 500, 500)
+//                                                    .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+//                                                    .setPriority(NotificationCompat.PRIORITY_MAX)
+//                                                    .setContentTitle(from)
+//                                                    .setStyle(new NotificationCompat.InboxStyle())
+//                                                    .setContentText(body);
+//
+//                                    // Creates an explicit intent for an Activity in your app
+//                                    Intent resultIntent = new Intent(context, MainActivity.class);
+//                                    // The stack builder object will contain an artificial back stack for the
+//                                    // started Activity.
+//                                    // This ensures that navigating backward from the Activity leads out of
+//                                    // your application to the Home screen.
+//                                    TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+//                                    // Adds the back stack for the Intent (but not the Intent itself)
+//                                    stackBuilder.addParentStack(MainActivity.class);
+//                                    // Adds the Intent that starts the Activity to the top of the stack
+//                                    stackBuilder.addNextIntent(resultIntent);
+//                                    PendingIntent resultPendingIntent =
+//                                            stackBuilder.getPendingIntent(
+//                                                    0,
+//                                                    PendingIntent.FLAG_UPDATE_CURRENT
+//                                            );
+//                                    mBuilder.setContentIntent(resultPendingIntent);
+//
+//                                    // Gets an instance of the NotificationManager service
+//                                    NotificationManager mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+//                                    // Builds the notification and issues it.
+//                                    mNotifyMgr.notify(mNotificationId, mBuilder.build());
+//                                }
 //                                }
 //                                }
 

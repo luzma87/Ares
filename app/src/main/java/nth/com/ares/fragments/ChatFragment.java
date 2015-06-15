@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,8 @@ import nth.com.ares.R;
 import nth.com.ares.domains.Mensaje;
 import nth.com.ares.utils.Utils;
 import org.jivesoftware.smack.packet.Message;
+
+import java.util.Date;
 
 public class ChatFragment extends Fragment {
 
@@ -44,8 +47,9 @@ public class ChatFragment extends Fragment {
                 message.setBody(texto);
                 message.setTo(roomName);
                 context.multiUserChat.sendMessage(message);
+                String fecha = android.text.format.DateFormat.format("dd-MM-yy HH:mm:ss", new Date()).toString();
 
-                showMessage(true, message.getFrom(), texto);
+                showMessage(true, message.getFrom(), texto, fecha);
                 txtMensaje.setText("");
 
                 Utils.log("XMPP", "Message sent");
@@ -93,7 +97,7 @@ public class ChatFragment extends Fragment {
         context.setTitle(R.string.chat_title);
     }
 
-    public void showMessage(final boolean mio, final String sender, final String mensaje) {
+    public void showMessage(final boolean mio, final String sender, final String mensaje, final String fecha) {
         context.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -120,11 +124,18 @@ public class ChatFragment extends Fragment {
 
                     TextView txvMensaje = new TextView(context);
                     txvMensaje.setText(mensaje);
+                    txvMensaje.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize);
 
 //                    LinearLayout.LayoutParams lpM = (LinearLayout.LayoutParams) txvMensaje.getLayoutParams();
                     LinearLayout.LayoutParams lpM = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                             LinearLayout.LayoutParams.WRAP_CONTENT);
                     lpM.setMargins(dp5, dp5, dp5, dp5);
+
+                    TextView txvFecha = new TextView(context);
+                    txvFecha.setText(fecha);
+//                    txvFecha.setTextAppearance(context, android.R.style.TextAppearance_Small);
+                    txvFecha.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize - 2);
+
                     if (esMio) {
                         View emptyView = new View(context);
                         LinearLayout.LayoutParams lpE = new LinearLayout.LayoutParams(0, 0, 1f);
@@ -139,49 +150,35 @@ public class ChatFragment extends Fragment {
 
                         linearLayout.addView(emptyView);
                         linearLayout.addView(txvMensaje);
+                        linearLayout.addView(txvFecha);
                     } else {
+                        LinearLayout linearLayoutVert = new LinearLayout(context);
+                        linearLayoutVert.setOrientation(LinearLayout.VERTICAL);
+                        LinearLayout.LayoutParams LLParamsVert = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT);
+                        linearLayoutVert.setLayoutParams(LLParamsVert);
+
                         TextView txvUsuario = new TextView(context);
                         txvUsuario.setText(sentBy);
+                        txvUsuario.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize);
 
                         txvMensaje.setBackgroundResource(R.drawable.bubble_recibe);
                         txvMensaje.setTextColor(context.getResources().getColor(R.color.mensaje_recibe_text));
                         txvMensaje.setPadding(dp15, dp5, dp5, dp5);
                         lpM.gravity = Gravity.START;
 
-                        linearLayout.addView(txvUsuario);
+                        linearLayoutVert.addView(txvUsuario);
+                        linearLayoutVert.addView(txvFecha);
+
+                        linearLayout.addView(linearLayoutVert);
                         linearLayout.addView(txvMensaje);
                     }
                     txvMensaje.setLayoutParams(lpM);
                     layoutMessages.addView(linearLayout);
                     /* ****************************************************************** */
 
-//                    TextView txvChunk = new TextView(context);
-//                    txvChunk.setText(mensaje);
-//                    txvChunk.setMaxWidth(screenWidth - 20);
-//                    txvChunk.setTextAppearance(context, R.style.chunk);
-//                    if (esMio) {
-//                        txvChunk.setBackgroundResource(R.drawable.selector_sent);
-//                        txvChunk.setPadding(10, 10, 20, 10);
-//                        txvChunk.setGravity(Gravity.END);
-//                    } else {
-//                        txvChunk.setBackgroundResource(R.drawable.selector_received);
-//                        txvChunk.setPadding(20, 10, 10, 10);
-//                        txvChunk.setGravity(Gravity.START);
-//                    }
-//                    txvChunk.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize);
-//
-//                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(txvChunk.getMeasuredWidth(), ViewGroup.LayoutParams.WRAP_CONTENT);
-//                    params.setMargins(5, 5, 2, 0);
-//
-//                    layoutMessages.addView(txvChunk);
-
                     sendScroll();
-//                    scrollViewMessages.post(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            scrollViewMessages.fullScroll(View.FOCUS_DOWN);
-//                        }
-//                    });
+
                 } else {
                     Utils.log("XMPP", "Typing");
                 }
@@ -211,8 +208,9 @@ public class ChatFragment extends Fragment {
     public void showMessage(Mensaje mensaje) {
         String sender = mensaje.sender;
         String mns = mensaje.body;
+        String fecha = mensaje.fecha;
         Boolean mio = mensaje.esMio();
-        showMessage(mio, sender, mns);
+        showMessage(mio, sender, mns, fecha);
     }
 
     public void setMessage(String message) {

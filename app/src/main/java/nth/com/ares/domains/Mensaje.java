@@ -10,15 +10,17 @@ public class Mensaje {
 
     public String sender;
     public String body;
+    public String fecha;
 
     public boolean enviando;
 
     MainActivity context;
 
-    public Mensaje(MainActivity context, String body, String sender, boolean enviando) {
+    public Mensaje(MainActivity context, String body, String sender, String fecha, boolean enviando) {
         this.context = context;
         this.body = body;
         this.sender = sender;
+        this.fecha = fecha;
         this.enviando = enviando;
     }
 
