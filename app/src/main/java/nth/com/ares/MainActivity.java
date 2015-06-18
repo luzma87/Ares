@@ -105,8 +105,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
         mUser = sharedPref.getString(getString(R.string.saved_user), defaultUser);
         mPass = sharedPref.getString(getString(R.string.saved_pass), defaultPass);
 
-        mAuthTask = new UserLoginTask(mUser, mPass);
-        mAuthTask.execute((Void) null);
+
         mToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
         setSupportActionBar(mToolbar);
 
@@ -122,6 +121,14 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
 
 //        Utils.log("LZM-MN-AC", "ON CREATE END");
         Utils.log("LZM_ACTIVITY", "ON CREATE");
+        if(mUser!=null && mUser!=""){
+            mAuthTask = new UserLoginTask(mUser, mPass);
+            mAuthTask.execute((Void) null);
+        }else{
+            Intent intent = new Intent(context, LoginActivity.class);
+            startActivity(intent);
+        }
+
     }
 
     @Override
@@ -374,7 +381,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
             Utils.log("XMPP", "On post execute " + success);
 //            Utils.log("LZM-MN-AC", "ON POST EXECUTE SUCCESS: " + success + " START");
             mAuthTask = null;
-            showProgress(false);
+            //showProgress(false);
             if (success) {
 //                Utils.log("LZM-MN-AC", "ON POST EXECUTE SUCCESS START");
                 // populate the navigation drawer

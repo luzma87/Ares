@@ -62,6 +62,11 @@ public class ChatService extends Service {
     public void onCreate() {
         Utils.log(TAG, "Service onCreate");
         context = this;
+        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        String defaultUser = "";
+        String defaultPass = "";
+        mUser = sharedPref.getString(getString(R.string.saved_user), defaultUser);
+        mPass = sharedPref.getString(getString(R.string.saved_pass), defaultPass);
     }
 
     @Override
@@ -80,11 +85,10 @@ public class ChatService extends Service {
 //            }
 //        };
 
-        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-        String defaultUser = "";
-        String defaultPass = "";
-        mUser = sharedPref.getString(getString(R.string.saved_user), defaultUser);
-        mPass = sharedPref.getString(getString(R.string.saved_pass), defaultPass);
+        if(mUser==null || mUser==""){
+            stopSelf();
+            return Service.START_NOT_STICKY;
+        }
 
         xmpp = new XMPP(mUser, mPass, context);
         xmpp.connect();
