@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
     int mNotificationId = 001;
 
     DateFormat dateFormat;
-
+    boolean vaAlLogin = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
 //        Utils.log("LZM-MN-AC", "ON CREATE START");
 
         context = this;
-
+        vaAlLogin=false;
         setContentView(R.layout.activity_main);
 
         mProgressView = findViewById(R.id.login_progress);
@@ -121,13 +121,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
 
 //        Utils.log("LZM-MN-AC", "ON CREATE END");
         Utils.log("LZM_ACTIVITY", "ON CREATE");
-        if(mUser!=null && mUser!=""){
-            mAuthTask = new UserLoginTask(mUser, mPass);
-            mAuthTask.execute((Void) null);
-        }else{
-            Intent intent = new Intent(context, LoginActivity.class);
-            startActivity(intent);
-        }
+
 
     }
 
@@ -135,6 +129,21 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
     protected void onStart() {
         super.onStart();
         Utils.log("LZM_ACTIVITY", "ON START");
+        if (isMyServiceRunning(ChatService.class)) {
+            Intent serviceIntent = new Intent(ChatService.class.getName());
+            serviceIntent.setPackage("com.android.vending");
+            stopService(serviceIntent);
+        }
+        if(mUser!=null && mUser!=""){
+
+            mAuthTask = new UserLoginTask(mUser, mPass);
+            mAuthTask.execute((Void) null);
+        }else{
+            Utils.log("LZM_ACTIVITY", "va al login");
+            Intent intent = new Intent(context, LoginActivity.class);
+            startActivity(intent);
+            vaAlLogin = true;
+        }
     }
 
     @Override
@@ -142,19 +151,16 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
         super.onResume();
         Utils.log("LZM_ACTIVITY", "ON RESUME");
 
-        if (isMyServiceRunning(ChatService.class)) {
-            Intent serviceIntent = new Intent(ChatService.class.getName());
-            serviceIntent.setPackage("com.android.vending");
-            stopService(serviceIntent);
-        }
+
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         Utils.log("LZM_ACTIVITY", "ON PAUSE");
-
-        if (!isMyServiceRunning(ChatService.class)) {
+        if(connection!=null)
+            connection.disconnect();
+        if (!isMyServiceRunning(ChatService.class) && !vaAlLogin) {
             Intent intent = new Intent(this, ChatService.class);
             startService(intent);
         }
@@ -165,10 +171,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
         super.onStop();
         Utils.log("LZM_ACTIVITY", "ON STOP");
 
-        if (!isMyServiceRunning(ChatService.class)) {
-            Intent intent = new Intent(this, ChatService.class);
-            startService(intent);
-        }
+
     }
 
     @Override
@@ -176,10 +179,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
         super.onDestroy();
         Utils.log("LZM_ACTIVITY", "ON DESTROY");
 
-        if (!isMyServiceRunning(ChatService.class)) {
-            Intent intent = new Intent(this, ChatService.class);
-            startService(intent);
-        }
+
     }
 
     @Override
@@ -210,9 +210,10 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
         if (connection != null) {
             connection.disconnect();
         }
-
+        vaAlLogin = true;
         Intent intent = new Intent(context, LoginActivity.class);
         startActivity(intent);
+
     }
 
     @Override
@@ -378,14 +379,14 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
 
         @Override
         protected void onPostExecute(final Boolean success) {
-            Utils.log("XMPP", "On post execute " + success);
+            Utils.log("XMPP", "On post execute!!1 " + success);
 //            Utils.log("LZM-MN-AC", "ON POST EXECUTE SUCCESS: " + success + " START");
-            mAuthTask = null;
+            //mAuthTask = null;
             //showProgress(false);
             if (success) {
 //                Utils.log("LZM-MN-AC", "ON POST EXECUTE SUCCESS START");
                 // populate the navigation drawer
-                Utils.log("XMPP", "USER: " + mUser);
+                Utils.log("XMPP !!! ", "USER: " + mUser);
                 mNavigationDrawerFragment.setUserData(mUser, "", BitmapFactory.decodeResource(getResources(), R.drawable.avatar));
 
                 multiUserChatManager = MultiUserChatManager.getInstanceFor(connection);
