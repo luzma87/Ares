@@ -15,7 +15,7 @@ public class BootReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
 
         if ("android.intent.action.BOOT_COMPLETED".equals(intent.getAction())) {
-            Intent myIntent = new Intent(context, ChatService.class);
+            Intent myIntent = new Intent(context, ChatService2.class);
             context.startService(myIntent);
             Toast.makeText(context, "Service Started", Toast.LENGTH_LONG).show();
         }

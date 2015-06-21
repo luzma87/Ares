@@ -40,19 +40,8 @@ public class ChatFragment extends Fragment {
         String texto = txtMensaje.getText().toString().trim();
         if (!texto.equals("")) {
             try {
-                Utils.log("XMPP", "Trying to send message");
-                Utils.log("XMPP", "Sending text [" + texto + "] to room [" + roomName + "]");
-                Message message = new Message();
-                message.setType(Message.Type.groupchat);
-                message.setBody(texto);
-                message.setTo(roomName);
-                context.multiUserChat.sendMessage(message);
-                String fecha = android.text.format.DateFormat.format("dd-MM-yy HH:mm:ss", new Date()).toString();
-
-                showMessage(true, message.getFrom(), texto, fecha);
+                context.sendMessage(texto);
                 txtMensaje.setText("");
-
-                Utils.log("XMPP", "Message sent");
             } catch (Exception e) {
                 Utils.log("XMPP", "Error sending message");
                 e.printStackTrace();
@@ -96,7 +85,10 @@ public class ChatFragment extends Fragment {
         super.onResume();
         context.setTitle(R.string.chat_title);
     }
-
+    public void clean(){
+        if(layoutMessages!=null)
+            layoutMessages.removeAllViews();
+    }
     public void showMessage(final boolean mio, final String sender, final String mensaje, final String fecha) {
         context.runOnUiThread(new Runnable() {
             @Override

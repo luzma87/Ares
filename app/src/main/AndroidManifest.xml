@@ -10,7 +10,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
-
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
@@ -18,6 +18,16 @@
 
     <!-- Adding the permission -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+    <uses-feature
+        android:name="android.hardware.camera.any"
+        android:required="false" />
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -53,8 +63,14 @@
             </intent-filter>
         </receiver>
 
+        <receiver android:name=".services.ChatReceiver" >
+            <intent-filter>
+                <action android:name="nth.com.ares.mybroadcast" />
+            </intent-filter>
+        </receiver>
+
         <service
-            android:name=".services.ChatService"
+            android:name=".services.ChatService2"
             android:enabled="true"
             android:exported="true" />
     </application>

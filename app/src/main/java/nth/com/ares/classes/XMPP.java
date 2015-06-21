@@ -1,7 +1,8 @@
 package nth.com.ares.classes;
 
-import android.content.Context;
 import android.os.AsyncTask;
+
+import nth.com.ares.services.ChatService2;
 import nth.com.ares.utils.Utils;
 import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
@@ -45,7 +46,7 @@ public class XMPP {
     MultiUserChatManager multiUserChatManager;
     MultiUserChat multiUserChat;
 
-    Context context;
+    ChatService2 context;
 
     /**
      * Default constructor
@@ -53,7 +54,7 @@ public class XMPP {
      * @param mUser
      * @param mPass
      */
-    public XMPP(String mUser, String mPass, Context context) {
+    public XMPP(String mUser, String mPass, ChatService2 context) {
         this.mUser = mUser;
         this.mPass = mPass;
         this.context = context;
@@ -65,35 +66,47 @@ public class XMPP {
      */
     public void connect() {
         Utils.log(TAG, "connect");
-        AsyncTask<Void, Void, Boolean> connectionThread = new AsyncTask<Void, Void, Boolean>() {
-            @Override
-            protected Boolean doInBackground(Void... arg0) {
-                boolean isConnected = false;
+        if(mUser!=null && mUser!=""){
+            AsyncTask<Void, Void, Boolean> connectionThread = new AsyncTask<Void, Void, Boolean>() {
+                @Override
+                protected Boolean doInBackground(Void... arg0) {
+                    boolean isConnected = false;
 
-                XMPPTCPConnectionConfiguration config = XMPPTCPConnectionConfiguration.builder()
-                        .setUsernameAndPassword(mUser, mPass)
-                        .setServiceName(Utils.SERVICE_NAME)
-                        .setHost(Utils.SERVER_HOST)
-                        .setPort(Utils.SERVER_PORT)
-                        .setSecurityMode(ConnectionConfiguration.SecurityMode.disabled)
-                        .build();
-                connection = new XMPPTCPConnection(config);
+                    XMPPTCPConnectionConfiguration config = XMPPTCPConnectionConfiguration.builder()
+                            .setUsernameAndPassword(mUser, mPass)
+                            .setServiceName(Utils.SERVICE_NAME)
+                            .setHost(Utils.SERVER_HOST)
+                            .setPort(Utils.SERVER_PORT)
+                            .setSecurityMode(ConnectionConfiguration.SecurityMode.disabled)
+                            .build();
+                    connection = new XMPPTCPConnection(config);
 
-                XMPPConnectionListener connectionListener = new XMPPConnectionListener();
-                connection.addConnectionListener(connectionListener);
+                    XMPPConnectionListener connectionListener = new XMPPConnectionListener();
+                    connection.addConnectionListener(connectionListener);
 
-                try {
-                    connection.connect();
-                    isConnected = true;
-                } catch (IOException e) {
-                } catch (SmackException e) {
-                } catch (XMPPException e) {
+                    try {
+                        connection.connect();
+                        isConnected = true;
+                    } catch (IOException e) {
+                        Utils.log(TAG, "error connect ");
+                        context.sendMessageToUI(context.LOGIN_RESULT, 0);
+                        e.printStackTrace();
+                    } catch (SmackException e) {
+                        Utils.log(TAG, "error connect ");
+                        context.sendMessageToUI(context.LOGIN_RESULT, 0);
+                        e.printStackTrace();
+                    } catch (XMPPException e) {
+                        Utils.log(TAG, "error connect ");
+                        context.sendMessageToUI(context.LOGIN_RESULT, 0);
+                        e.printStackTrace();
+                    }
+
+                    return isConnected;
                 }
+            };
+            connectionThread.execute();
+        }
 
-                return isConnected;
-            }
-        };
-        connectionThread.execute();
     }
 
     /**
@@ -102,32 +115,50 @@ public class XMPP {
      * @param connection
      */
     private void login(XMPPTCPConnection connection) {
-        Utils.log(TAG, "login");
-        try {
-            connection.login();
+        Utils.log(TAG, "!!!---AAAA  ---  login u- "+mUser+"  p- "+mPass);
+        if(mUser!=null && mUser!="") {
 
-            multiUserChatManager = MultiUserChatManager.getInstanceFor(connection);
+            try {
+                connection.login();
 
-            int historyLength = Utils.getHistoryLength(context);
+                multiUserChatManager = MultiUserChatManager.getInstanceFor(connection);
 
-            multiUserChat = multiUserChatManager.getMultiUserChat(Utils.getRoomName(context) + "@" +
-                    Utils.getRoomService(context) + "." + Utils.SERVICE_NAME);
-            DiscussionHistory history = new DiscussionHistory();
-            history.setMaxStanzas(0);
+                int historyLength = Utils.getHistoryLength(context);
 
-            multiUserChat.join(mUser, mPass, history, SmackConfiguration.getDefaultPacketReplyTimeout());
+                multiUserChat = multiUserChatManager.getMultiUserChat(Utils.getRoomName(context) + "@" +
+                        Utils.getRoomService(context) + "." + Utils.SERVICE_NAME);
+                DiscussionHistory history = new DiscussionHistory();
+                history.setMaxStanzas(0);
 
-        } catch (SmackException.NotConnectedException e) {
-            // If is not connected, a timer is schelude and a it will try to reconnect
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    connect();
-                }
-            }, 5 * 1000);
-        } catch (XMPPException e) {
-        } catch (SmackException e) {
-        } catch (IOException e) {
+                multiUserChat.join(mUser, mPass, history, SmackConfiguration.getDefaultPacketReplyTimeout());
+                context.multiUserChat = multiUserChat;
+                context.connection = connection;
+                context.isConected = 1;
+                context.sendMessageToUI(context.LOGIN_RESULT, 1);
+                context.setListener();
+                Utils.log("ChatCom", "!!!!!!!!!!!! -------- completado todo " + context.multiUserChat);
+
+            } catch (SmackException.NotConnectedException e) {
+                // If is not connected, a timer is schelude and a it will try to reconnect
+                new Timer().schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        connect();
+                    }
+                }, 5 * 1000);
+            } catch (XMPPException e) {
+                Utils.log(TAG, "error join ");
+                context.sendMessageToUI(context.LOGIN_RESULT, 0);
+                e.printStackTrace();
+            } catch (SmackException e) {
+                Utils.log(TAG, "error join ");
+                context.sendMessageToUI(context.LOGIN_RESULT, 0);
+                e.printStackTrace();
+            } catch (IOException e) {
+                Utils.log(TAG, "error join ");
+                context.sendMessageToUI(context.LOGIN_RESULT, 0);
+                e.printStackTrace();
+            }
         }
     }
 
@@ -147,10 +178,14 @@ public class XMPP {
     public class XMPPConnectionListener implements ConnectionListener {
         @Override
         public void connected(XMPPConnection connection) {
-            Utils.log(TAG, "connected");
+            Utils.log(TAG, "<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>   connected");
             if (!connection.isAuthenticated()) {
                 login((XMPPTCPConnection) connection);
+
                 Utils.log(TAG, "connection not auth: login again");
+            }else{
+                context.isConected=0;
+                context.sendMessageToUI(context.LOGIN_RESULT,0);
             }
         }
 
@@ -161,11 +196,15 @@ public class XMPP {
 
         @Override
         public void connectionClosed() {
+            context.isConected=0;
+            connect();
             Utils.log(TAG, "connection closed");
         }
 
         @Override
         public void connectionClosedOnError(Exception arg0) {
+            context.isConected=0;
+            connect();
             Utils.log(TAG, "connection closed on error");
         }
 
@@ -181,6 +220,8 @@ public class XMPP {
 
         @Override
         public void reconnectionSuccessful() {
+            context.isConected=1;
+            login(connection);
             Utils.log(TAG, "reconnection sucessful");
         }
     }
