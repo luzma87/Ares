@@ -10,13 +10,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+import com.xgc1986.ripplebutton.widget.RippleButton;
+import com.xgc1986.ripplebutton.widget.RippleImageButton;
+import it.sephiroth.android.library.tooltip.TooltipManager;
 import nth.com.ares.MainActivity;
 import nth.com.ares.R;
 import nth.com.ares.domains.Mensaje;
 import nth.com.ares.utils.Utils;
-import org.jivesoftware.smack.packet.Message;
 
-import java.util.Date;
+
+/*
+        https://github.com/sephiroth74/android-target-tooltip
+        https://github.com/xgc1986/RippleViews
+ */
 
 public class ChatFragment extends Fragment {
 
@@ -26,6 +32,19 @@ public class ChatFragment extends Fragment {
     EditText txtMensaje;
     ScrollView scrollViewMessages;
     LinearLayout layoutMessages;
+
+
+    private final String[] botonesIds = {
+            "asalto",
+            "accidente",
+            "sospechoso",
+            "intruso",
+            "libadores",
+            "ubicacion"
+    };
+    RippleImageButton[] botones = new RippleImageButton[botonesIds.length];
+    String[] botonesTitle = new String[botonesIds.length];
+    String[] botonesMsg = new String[botonesIds.length];
 
     public int screenHeight;
     public int screenWidth;
@@ -67,6 +86,41 @@ public class ChatFragment extends Fragment {
             }
         });
 
+        for (int i = 0; i < botonesIds.length; i++) {
+            final int pos = i;
+            String id = botonesIds[i];
+            int resID = getResources().getIdentifier("btn_" + id, "id", context.getPackageName());
+            botones[i] = (RippleImageButton) view.findViewById(resID);
+            botonesTitle[i] = Utils.getStringResourceByName(context, "btn_" + id + "_title");
+            botonesMsg[i] = Utils.getStringResourceByName(context, "btn_" + id + "_msg");
+
+            botones[i].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    TooltipManager.getInstance(context)
+                            .create(pos)
+                            .anchor(botones[pos], TooltipManager.Gravity.LEFT)
+                            .closePolicy(TooltipManager.ClosePolicy.TouchOutside, 3000)
+                            .activateDelay(800)
+                            .text(botonesTitle[pos])
+                            .maxWidth(500)
+                            .show();
+                }
+            });
+
+            botones[i].setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    Utils.vibrate(200, context);
+                    if (pos < 5) {
+                        setMessage(botonesMsg[pos] + " Necesito ayuda!");
+                    }
+                    context.sendMyLoc();
+                    return true;
+                }
+            });
+        }
+
         txtMensaje = (EditText) view.findViewById(R.id.txtMensaje);
 
         scrollViewMessages = (ScrollView) view.findViewById(R.id.scrollViewMessages);
@@ -85,10 +139,12 @@ public class ChatFragment extends Fragment {
         super.onResume();
         context.setTitle(R.string.chat_title);
     }
-    public void clean(){
-        if(layoutMessages!=null)
+
+    public void clean() {
+        if (layoutMessages != null)
             layoutMessages.removeAllViews();
     }
+
     public void showMessage(final boolean mio, final String sender, final String mensaje, final String fecha) {
         context.runOnUiThread(new Runnable() {
             @Override

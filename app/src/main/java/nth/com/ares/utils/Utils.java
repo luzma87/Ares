@@ -172,4 +172,14 @@ public class Utils {
         float scale = context.getResources().getDisplayMetrics().density;
         return (int) (pixels * scale + 0.5f);
     }
+
+    public static String getStringResourceByName(Context c, String aString) {
+        String packageName = c.getPackageName();
+        int resId = c.getResources().getIdentifier(aString, "string", packageName);
+        if (resId == 0) {
+            return aString;
+        } else {
+            return c.getString(resId);
+        }
+    }
 }

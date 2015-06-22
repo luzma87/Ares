@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "nth.com.ares"
-        minSdkVersion 14
+        minSdkVersion 16
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"
@@ -30,4 +30,11 @@ dependencies {
     compile "org.igniterealtime.smack:smack-tcp:4.1.0-rc1"
     // optional features
     compile "org.igniterealtime.smack:smack-android-extensions:4.1.0-rc1"
+
+    //botones
+    compile 'com.xgc1986.android:ripplebutton:0.4.1'
+
+    compile('it.sephiroth.android.library.targettooltip:target-tooltip-library:1.2.2@aar') {
+        transitive = true
+    }
 }

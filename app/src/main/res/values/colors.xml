@@ -30,4 +30,22 @@
     <color name="mensaje_mio_text">#d2d2d2</color>
     <color name="mensaje_recibe_text">#2d2d2d</color>
 
+    <color name="btn_asalto_bg">#009688</color>
+    <color name="btn_asalto_ripple">#FFF</color>
+
+    <color name="btn_accidente_bg">#C2185B</color>
+    <color name="btn_accidente_ripple">#FFF</color>
+
+    <color name="btn_sospechoso_bg">#FF5722</color>
+    <color name="btn_sospechoso_ripple">#FFF</color>
+
+    <color name="btn_intruso_bg">#D32F2F</color>
+    <color name="btn_intruso_ripple">#FFF</color>
+
+    <color name="btn_libadores_bg">#FFC107</color>
+    <color name="btn_libadores_ripple">#FFF</color>
+
+    <color name="btn_ubicacion_bg">#4CAF50</color>
+    <color name="btn_ubicacion_ripple">#FFF</color>
+
 </resources>

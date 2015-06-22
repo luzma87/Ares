@@ -1,24 +1,104 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="nth.com.ares.fragments.ChatFragmentList"
     android:id="@+id/layoutChat"
     android:layout_below="@+id/toolbar_actionbar">
 
-    <ScrollView
-        android:id="@+id/scrollViewMessages"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:layout_above="@+id/layoutNewMessage"
-        android:background="@color/myPrimaryLightColor">
+        android:layout_height="match_parent"
+        android:layout_above="@+id/layoutNewMessage">
 
-        <LinearLayout
-            android:id="@+id/layoutMessages"
-            android:orientation="vertical"
+        <ScrollView
+            android:id="@+id/scrollViewBotones"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:paddingRight="3dp"
+            android:paddingEnd="3dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.xgc1986.ripplebutton.widget.RippleImageButton
+                    android:id="@+id/btn_asalto"
+                    app:buttonColor="@color/btn_asalto_bg"
+                    app:rippleColor="@color/btn_asalto_ripple"
+                    android:layout_width="50dp"
+                    android:layout_height="55dp"
+                    android:src="@drawable/ic_thief_robbing"
+                    android:contentDescription="@string/btn_asalto_title" />
+
+                <com.xgc1986.ripplebutton.widget.RippleImageButton
+                    android:id="@+id/btn_accidente"
+                    app:buttonColor="@color/btn_accidente_bg"
+                    app:rippleColor="@color/btn_accidente_ripple"
+                    android:layout_width="50dp"
+                    android:layout_height="55dp"
+                    android:src="@drawable/ic_side_crash"
+                    android:contentDescription="@string/btn_accidente_title" />
+
+                <com.xgc1986.ripplebutton.widget.RippleImageButton
+                    android:id="@+id/btn_sospechoso"
+                    app:buttonColor="@color/btn_sospechoso_bg"
+                    app:rippleColor="@color/btn_sospechoso_ripple"
+                    android:layout_width="50dp"
+                    android:layout_height="55dp"
+                    android:src="@drawable/ic_sospechoso"
+                    android:contentDescription="@string/btn_sospechoso_title" />
+
+                <com.xgc1986.ripplebutton.widget.RippleImageButton
+                    android:id="@+id/btn_intruso"
+                    app:buttonColor="@color/btn_intruso_bg"
+                    app:rippleColor="@color/btn_intruso_ripple"
+                    android:layout_width="50dp"
+                    android:layout_height="55dp"
+                    android:src="@drawable/ic_intruso"
+                    android:contentDescription="@string/btn_intruso_title" />
+
+                <com.xgc1986.ripplebutton.widget.RippleImageButton
+                    android:id="@+id/btn_libadores"
+                    app:buttonColor="@color/btn_libadores_bg"
+                    app:rippleColor="@color/btn_libadores_ripple"
+                    android:layout_width="50dp"
+                    android:layout_height="55dp"
+                    android:src="@drawable/ic_libadores"
+                    android:contentDescription="@string/btn_libadores_title" />
+
+                <com.xgc1986.ripplebutton.widget.RippleImageButton
+                    android:id="@+id/btn_ubicacion"
+                    app:buttonColor="@color/btn_ubicacion_bg"
+                    app:rippleColor="@color/btn_ubicacion_ripple"
+                    android:layout_width="50dp"
+                    android:layout_height="55dp"
+                    android:src="@drawable/ic_location_map"
+                    android:contentDescription="@string/btn_ubicacion_title" />
+            </LinearLayout>
+        </ScrollView>
+
+        <ScrollView
+            android:id="@+id/scrollViewMessages"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </ScrollView>
+            android:layout_height="fill_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_toLeftOf="@id/scrollViewBotones"
+            android:layout_toStartOf="@id/scrollViewBotones"
+            android:background="@color/myPrimaryLightColor">
+
+            <LinearLayout
+                android:id="@+id/layoutMessages"
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" />
+        </ScrollView>
+    </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/layoutNewMessage"

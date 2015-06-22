@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
     public boolean isDoneLoading = false;
     public String mUser;
     String mPass;
-    String logged="N";
+    String logged = "N";
 
     private View mProgressView;
 
@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
     class IncomingHandler extends Handler {
         @Override
         public void handleMessage(android.os.Message msg) {
-            Utils.log("ChatCom", "activity recibio "+msg.what+" ");
+            Utils.log("ChatCom", "activity recibio " + msg.what + " ");
             switch (msg.what) {
                 case LOGIN_RESULT:
 
@@ -102,13 +102,14 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
                     chatFragmentList.showMessage(msn);
                     break;
                 case ChatService2.MSG_SET_STRING_VALUE:
-                    Utils.log("ChatCom", "activity recibio "+msg.what+" "+msg.getData().getString("str1"));
+                    Utils.log("ChatCom", "activity recibio " + msg.what + " " + msg.getData().getString("str1"));
                     break;
                 default:
                     super.handleMessage(msg);
             }
         }
     }
+
     private ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
             mService = new Messenger(service);
@@ -117,8 +118,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
                 android.os.Message msg = android.os.Message.obtain(null, ChatService2.MSG_REGISTER_CLIENT);
                 msg.replyTo = mMessenger;
                 mService.send(msg);
-            }
-            catch (RemoteException e) {
+            } catch (RemoteException e) {
                 // In this case the service has crashed before we could even do anything with it
             }
         }
@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
         DbHelper helper = new DbHelper(this);
         helper.getWritableDatabase();
         context = this;
-        vaAlLogin=false;
+        vaAlLogin = false;
         setContentView(R.layout.activity_main);
 
         mProgressView = findViewById(R.id.login_progress);
@@ -171,16 +171,15 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
         try {
             doBindService();
 
-        }
-        catch (Throwable t) {
+        } catch (Throwable t) {
             Log.e("ChatCom", "Failed to unbind from the service", t);
         }
-        if(logged=="N"){
+        if (logged.equals("N")) {
             Utils.log("LZM_ACTIVITY", "va al login");
             Intent intent = new Intent(context, LoginActivity.class);
             startActivity(intent);
             vaAlLogin = true;
-        }else{
+        } else {
             loadMensajes();
             sendMessageToService(ChatService2.MSG_TEST);
         }
@@ -202,6 +201,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
 
         return false;
     }
+
     private void CheckIfServiceIsRunning() {
         //If the service is running when the activity starts, we want to automatically bind to it.
         Utils.log("ChatCom", "check if running");
@@ -219,8 +219,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
                     msg.replyTo = mMessenger;
                     mService.send(msg);
                     showProgress(true);
-                }
-                catch (RemoteException e) {
+                } catch (RemoteException e) {
                 }
             }
         }
@@ -236,8 +235,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
             android.os.Message msg = android.os.Message.obtain(null, ChatService2.SEND_M);
             msg.setData(b);
             mService.send(msg);
-        }
-        catch (RemoteException e) {
+        } catch (RemoteException e) {
             // The client is dead. Remove it from the list; we are going through the list from back to front so this is safe to do inside the loop.
 
         }
@@ -249,6 +247,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
         mIsBound = true;
         Utils.log("ChatCom", "binding");
     }
+
     void doUnbindService() {
         if (mIsBound) {
             // If we have received the service, and hence registered with it, then now is the time to unregister.
@@ -257,8 +256,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
                     android.os.Message msg = android.os.Message.obtain(null, ChatService2.MSG_UNREGISTER_CLIENT);
                     msg.replyTo = mMessenger;
                     mService.send(msg);
-                }
-                catch (RemoteException e) {
+                } catch (RemoteException e) {
                     // There is nothing special we need to do if the service has crashed.
                 }
             }
@@ -297,8 +295,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
         super.onDestroy();
         try {
             doUnbindService();
-        }
-        catch (Throwable t) {
+        } catch (Throwable t) {
             Log.e("ChatCom", "Failed to unbind from the service", t);
         }
 
@@ -361,37 +358,40 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
 
         int id = item.getItemId();
 
+//        if (id == R.id.action_ubicacion) {
+//            sendMyLoc();
+//        }
 
-        if (id == R.id.action_asalto) {
-            chatFragmentList.setMessage("Asalto! Necesito ayuda!");
-            sendMyLoc();
-        } else if (id == R.id.action_ubicacion) {
-            sendMyLoc();
-        } else if (id == R.id.action_accidente) {
-            chatFragmentList.setMessage("Accidente! Necesito ayuda!");
-            sendMyLoc();
-        } else if (id == R.id.action_ambulancia) {
-            chatFragmentList.setMessage("Necesito una ambulancia!");
-            sendMyLoc();
-        }
+//        if (id == R.id.action_asalto) {
+//            chatFragmentList.setMessage("Asalto! Necesito ayuda!");
+//            sendMyLoc();
+//        } else if (id == R.id.action_ubicacion) {
+//            sendMyLoc();
+//        } else if (id == R.id.action_accidente) {
+//            chatFragmentList.setMessage("Accidente! Necesito ayuda!");
+//            sendMyLoc();
+//        } else if (id == R.id.action_ambulancia) {
+//            chatFragmentList.setMessage("Necesito una ambulancia!");
+//            sendMyLoc();
+//        }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void sendMyLoc() {
+    public void sendMyLoc() {
         progress = ProgressDialog.show(this, getString(R.string.espere), getString(R.string.calculando_ubicacion), true);
         MyLocation.LocationResult locationResult = new MyLocation.LocationResult() {
             @Override
             public void gotLocation(Location location) {
                 //Got the location!
-                chatFragmentList.setMessage("loc:" + location.getLatitude() + "," + location.getLongitude());
+                String str = Utils.getStringResourceByName(context, "btn_ubicacion_msg");
+                chatFragmentList.setMessage(str + location.getLatitude() + "," + location.getLongitude());
                 progress.dismiss();
             }
         };
         MyLocation myLocation = new MyLocation();
         myLocation.getLocation(this, locationResult);
     }
-
 
 
     /**
@@ -431,14 +431,14 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
     }
 
 
-    public void loadMensajes(){
+    public void loadMensajes() {
         Utils.log("main act", "load mensajes");
         chatFragmentList.clean();
         MensajeDbHelper db = new MensajeDbHelper(this);
         leidos = db.getAllMensajeesByVisto("S");
-        Utils.log("main act ", "leios "+leidos);
+        Utils.log("main act ", "leios " + leidos);
         noLeidos = db.getAllMensajeesByVisto("N");
-        Utils.log("main act ", "no leios "+noLeidos);
+        Utils.log("main act ", "no leios " + noLeidos);
         for (Mensaje msn : leidos) {
             chatFragmentList.showMessage(msn);
         }
@@ -447,7 +447,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
             msn.save();
             chatFragmentList.showMessage(msn);
         }
-        if(!mIsBound)
+        if (!mIsBound)
             doBindService();
     }
 

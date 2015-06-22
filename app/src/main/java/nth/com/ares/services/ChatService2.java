@@ -243,7 +243,7 @@ public class ChatService2 extends Service {
     }
 
     public void setListener(){
-        Utils.log("ChatCom", "añade listener");
+        Utils.log("ChatCom", "aÃ±ade listener");
 
         multiUserChat.addMessageListener(new MessageListener() {
             @Override

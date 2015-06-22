@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="btn_asalto_title">Asalto</string>
+    <string name="btn_accidente_title">Accidente</string>
+    <string name="btn_sospechoso_title">Sospechoso</string>
+    <string name="btn_intruso_title">Intruso</string>
+    <string name="btn_libadores_title">Libadores</string>
+    <string name="btn_ubicacion_title">Enviar mi ubicación</string>
+
+    <string name="btn_asalto_msg">asl:Asalto! </string>
+    <string name="btn_accidente_msg">acc:Accidente! </string>
+    <string name="btn_sospechoso_msg">ssp:Sospechoso! </string>
+    <string name="btn_intruso_msg">int:Intruso! </string>
+    <string name="btn_libadores_msg">lbd:Libadores! </string>
+    <string name="btn_ubicacion_msg">loc:Mi ubicación: </string>
+</resources>

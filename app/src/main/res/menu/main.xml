@@ -6,24 +6,24 @@
     <!--<item-->
     <!--android:id="@+id/action_logout"-->
     <!--android:title="logout" />-->
-    <item
-        android:id="@+id/action_asalto"
-        android:title="@string/asalto"
-        app:showAsAction="always"
-        android:icon="@drawable/ic_thief_robbing" />
-    <item
-        android:id="@+id/action_ubicacion"
-        android:title="@string/ubicacion"
-        app:showAsAction="ifRoom"
-        android:icon="@drawable/ic_location_map" />
-    <item
-        android:id="@+id/action_accidente"
-        android:title="@string/accidente"
-        app:showAsAction="ifRoom"
-        android:icon="@drawable/ic_side_crash" />
-    <item
-        android:id="@+id/action_ambulancia"
-        android:title="@string/ambulancia"
-        app:showAsAction="ifRoom"
-        android:icon="@drawable/ic_ambulance" />
+    <!--<item-->
+    <!--android:id="@+id/action_asalto"-->
+    <!--android:title="@string/asalto"-->
+    <!--app:showAsAction="always"-->
+    <!--android:icon="@drawable/ic_thief_robbing" />-->
+    <!--<item-->
+    <!--android:id="@+id/action_ubicacion"-->
+    <!--android:title="@string/ubicacion"-->
+    <!--app:showAsAction="ifRoom"-->
+    <!--android:icon="@drawable/ic_location_map" />-->
+    <!--<item-->
+    <!--android:id="@+id/action_accidente"-->
+    <!--android:title="@string/accidente"-->
+    <!--app:showAsAction="ifRoom"-->
+    <!--android:icon="@drawable/ic_side_crash" />-->
+    <!--<item-->
+    <!--android:id="@+id/action_ambulancia"-->
+    <!--android:title="@string/ambulancia"-->
+    <!--app:showAsAction="ifRoom"-->
+    <!--android:icon="@drawable/ic_ambulance" />-->
 </menu>
