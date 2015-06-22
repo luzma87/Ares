@@ -45,6 +45,7 @@ public class ChatFragment extends Fragment {
     RippleImageButton[] botones = new RippleImageButton[botonesIds.length];
     String[] botonesTitle = new String[botonesIds.length];
     String[] botonesMsg = new String[botonesIds.length];
+    String[] botonesPrefix = new String[botonesIds.length];
 
     public int screenHeight;
     public int screenWidth;
@@ -56,10 +57,15 @@ public class ChatFragment extends Fragment {
     String serviceName;
 
     private void sendMessage() {
+        String pref = Utils.getStringResourceByName(context, "mensaje_prefix");
+        sendMessage(pref);
+    }
+
+    private void sendMessage(String prefix) {
         String texto = txtMensaje.getText().toString().trim();
         if (!texto.equals("")) {
             try {
-                context.sendMessage(texto);
+                context.sendMessage(prefix + ":" + texto);
                 txtMensaje.setText("");
             } catch (Exception e) {
                 Utils.log("XMPP", "Error sending message");
@@ -91,6 +97,7 @@ public class ChatFragment extends Fragment {
             String id = botonesIds[i];
             int resID = getResources().getIdentifier("btn_" + id, "id", context.getPackageName());
             botones[i] = (RippleImageButton) view.findViewById(resID);
+            botonesPrefix[i] = Utils.getStringResourceByName(context, "btn_" + id + "_prefix");
             botonesTitle[i] = Utils.getStringResourceByName(context, "btn_" + id + "_title");
             botonesMsg[i] = Utils.getStringResourceByName(context, "btn_" + id + "_msg");
 
@@ -108,12 +115,14 @@ public class ChatFragment extends Fragment {
                 }
             });
 
+            final String postfix = context.getString(R.string.mensaje_postfix);
+
             botones[i].setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
                     Utils.vibrate(200, context);
                     if (pos < 5) {
-                        setMessage(botonesMsg[pos] + " Necesito ayuda!");
+                        setMessage(botonesPrefix[pos], botonesMsg[pos] + " " + postfix);
                     }
                     context.sendMyLoc();
                     return true;
@@ -150,6 +159,12 @@ public class ChatFragment extends Fragment {
             @Override
             public void run() {
                 if (sender != null && mensaje != null) {
+
+                    String prefix = mensaje.substring(0, 4);
+                    String msg = mensaje.substring(4);
+
+                    Utils.log("LZM", prefix + "          " + msg);
+
                     Boolean esMio = mio;
                     String find = roomName + "@" + roomService + "\\." + serviceName + "/";
                     String sentBy = "";
@@ -171,7 +186,7 @@ public class ChatFragment extends Fragment {
                     linearLayout.setLayoutParams(LLParams);
 
                     TextView txvMensaje = new TextView(context);
-                    txvMensaje.setText(mensaje);
+                    txvMensaje.setText(msg);
                     txvMensaje.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize);
 
 //                    LinearLayout.LayoutParams lpM = (LinearLayout.LayoutParams) txvMensaje.getLayoutParams();
@@ -261,10 +276,10 @@ public class ChatFragment extends Fragment {
         showMessage(mio, sender, mns, fecha);
     }
 
-    public void setMessage(String message) {
+    public void setMessage(String prefix, String message) {
         txtMensaje.setText(message);
         txtMensaje.setSelection(txtMensaje.getText().length());
-        sendMessage();
+        sendMessage(prefix);
     }
 
 }

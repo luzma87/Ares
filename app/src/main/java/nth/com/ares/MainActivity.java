@@ -384,8 +384,10 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
             @Override
             public void gotLocation(Location location) {
                 //Got the location!
-                String str = Utils.getStringResourceByName(context, "btn_ubicacion_msg");
-                chatFragmentList.setMessage(str + location.getLatitude() + "," + location.getLongitude());
+
+                String prf = getString(R.string.btn_ubicacion_prefix);
+                String str = getString(R.string.btn_ubicacion_msg);
+                chatFragmentList.setMessage(prf, str + " " + location.getLatitude() + "," + location.getLongitude());
                 progress.dismiss();
             }
         };

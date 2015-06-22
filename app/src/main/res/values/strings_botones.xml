@@ -7,10 +7,20 @@
     <string name="btn_libadores_title">Libadores</string>
     <string name="btn_ubicacion_title">Enviar mi ubicación</string>
 
-    <string name="btn_asalto_msg">asl:Asalto! </string>
-    <string name="btn_accidente_msg">acc:Accidente! </string>
-    <string name="btn_sospechoso_msg">ssp:Sospechoso! </string>
-    <string name="btn_intruso_msg">int:Intruso! </string>
-    <string name="btn_libadores_msg">lbd:Libadores! </string>
-    <string name="btn_ubicacion_msg">loc:Mi ubicación: </string>
+    <string name="btn_asalto_prefix">asl</string>
+    <string name="btn_accidente_prefix">acc</string>
+    <string name="btn_sospechoso_prefix">ssp</string>
+    <string name="btn_intruso_prefix">int</string>
+    <string name="btn_libadores_prefix">lbd</string>
+    <string name="btn_ubicacion_prefix">loc</string>
+    <string name="mensaje_prefix">msg</string>
+
+    <string name="btn_asalto_msg">Asalto!</string>
+    <string name="btn_accidente_msg">Accidente!</string>
+    <string name="btn_sospechoso_msg">Sospechoso!</string>
+    <string name="btn_intruso_msg">Intruso!</string>
+    <string name="btn_libadores_msg">Libadores!</string>
+    <string name="btn_ubicacion_msg">Mi ubicación:</string>
+
+    <string name="mensaje_postfix">Necesito ayuda!</string>
 </resources>
