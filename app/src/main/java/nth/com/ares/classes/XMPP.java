@@ -114,7 +114,7 @@ public class XMPP {
      *
      * @param connection
      */
-    private void login(XMPPTCPConnection connection) {
+    public void login(XMPPTCPConnection connection) {
         Utils.log(TAG, "!!!---AAAA  ---  login u- "+mUser+"  p- "+mPass);
         if(mUser!=null && mUser!="") {
 

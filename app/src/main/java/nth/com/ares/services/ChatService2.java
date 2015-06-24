@@ -26,6 +26,7 @@ import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.delay.packet.DelayInformation;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
@@ -90,6 +91,7 @@ public class ChatService2 extends Service {
                     mClients.remove(msg.replyTo);
                     break;
                 case MSG_TEST:
+                    Utils.log("ChatCom", "EEEEEEEEEEEE   Entro test!!! "+msg.what);
                     if(!checkConnection())
                         xmpp.connect();
                     break;
@@ -339,10 +341,27 @@ public class ChatService2 extends Service {
     }
 
     public boolean checkConnection(){
+        Utils.log("ChatCom", "++++++++++++++ check connection ");
+        if(connection==null)
+            return false;
         try {
-            Utils.log("ChatCom", "++++++++++++++ check connection ");
             Roster roster = Roster.getInstanceFor(connection);
             Presence availability = roster.getPresence(mUser);
+            Presence p = new Presence(Presence.Type.available, "A", 42, Presence.Mode.available);
+            connection.sendPacket(p);
+            String xml = availability.toXML().toString();
+            Utils.log("ChatCom", "++++++++++++++  xml  "+xml);
+            Utils.log("ChatCom", "++++++++++++++ is connected  "+connection.isConnected());
+            Utils.log("ChatCom", "++++++++++++++ is auth  "+connection.isAuthenticated());
+            if(!connection.isConnected()) {
+                return false;
+            }else{
+                if(!connection.isAuthenticated()){
+                    xmpp.login((XMPPTCPConnection) connection);
+                    return false;
+                }
+            }
+
             return true;
         }
         catch (Throwable t) { //you should always ultimately catch all exceptions in timer tasks.
