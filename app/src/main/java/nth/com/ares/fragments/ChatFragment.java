@@ -273,7 +273,9 @@ public class ChatFragment extends Fragment {
     public void showMessage(Mensaje mensaje) {
         String sender = mensaje.sender;
         String mns = mensaje.body;
-        String fecha = mensaje.fecha.substring(10,19);
+        String fecha = mensaje.fecha ;
+        if(fecha.length()>18)
+            fecha = fecha.substring(10,19);
         Boolean mio = mensaje.esMio();
         showMessage(mio, sender, mns, fecha);
     }

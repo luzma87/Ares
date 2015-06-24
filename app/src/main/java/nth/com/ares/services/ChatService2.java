@@ -223,7 +223,7 @@ public class ChatService2 extends Service {
                 public void run() {
                     onTimerTick();
                 }
-            }, 1000 * 60, 1000 * 60);
+            }, 1000 * 60, 1000 * 60*3);
             isRunning = true;
 
         }
