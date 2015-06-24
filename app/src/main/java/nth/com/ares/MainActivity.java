@@ -378,16 +378,14 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
         return super.onOptionsItemSelected(item);
     }
 
-    public void sendMyLoc() {
+    public void sendMyLoc(final String pref) {
         progress = ProgressDialog.show(this, getString(R.string.espere), getString(R.string.calculando_ubicacion), true);
         MyLocation.LocationResult locationResult = new MyLocation.LocationResult() {
             @Override
             public void gotLocation(Location location) {
                 //Got the location!
-
-                String prf = getString(R.string.btn_ubicacion_prefix);
                 String str = getString(R.string.btn_ubicacion_msg);
-                chatFragmentList.setMessage(prf, str + " " + location.getLatitude() + "," + location.getLongitude());
+                chatFragmentList.setMessage(pref, str + " " + location.getLatitude() + "," + location.getLongitude());
                 progress.dismiss();
             }
         };

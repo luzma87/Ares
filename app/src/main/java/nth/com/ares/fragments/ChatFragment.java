@@ -46,6 +46,7 @@ public class ChatFragment extends Fragment {
     String[] botonesTitle = new String[botonesIds.length];
     String[] botonesMsg = new String[botonesIds.length];
     String[] botonesPrefix = new String[botonesIds.length];
+    String[] botonesPrefixLoc = new String[botonesIds.length];
 
     public int screenHeight;
     public int screenWidth;
@@ -98,6 +99,7 @@ public class ChatFragment extends Fragment {
             int resID = getResources().getIdentifier("btn_" + id, "id", context.getPackageName());
             botones[i] = (RippleImageButton) view.findViewById(resID);
             botonesPrefix[i] = Utils.getStringResourceByName(context, "btn_" + id + "_prefix");
+            botonesPrefixLoc[i] = Utils.getStringResourceByName(context, "btn_" + id + "_prefix_loc");
             botonesTitle[i] = Utils.getStringResourceByName(context, "btn_" + id + "_title");
             botonesMsg[i] = Utils.getStringResourceByName(context, "btn_" + id + "_msg");
 
@@ -124,7 +126,7 @@ public class ChatFragment extends Fragment {
                     if (pos < 5) {
                         setMessage(botonesPrefix[pos], botonesMsg[pos] + " " + postfix);
                     }
-                    context.sendMyLoc();
+                    context.sendMyLoc(botonesPrefixLoc[pos]);
                     return true;
                 }
             });

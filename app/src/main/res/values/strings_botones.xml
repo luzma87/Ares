@@ -15,6 +15,13 @@
     <string name="btn_ubicacion_prefix">loc</string>
     <string name="mensaje_prefix">msg</string>
 
+    <string name="btn_asalto_prefix_loc">asL</string>
+    <string name="btn_accidente_prefix_loc">acL</string>
+    <string name="btn_sospechoso_prefix_loc">ssL</string>
+    <string name="btn_intruso_prefix_loc">inL</string>
+    <string name="btn_libadores_prefix_loc">lbL</string>
+    <string name="btn_ubicacion_prefix_loc">loc</string>
+
     <string name="btn_asalto_msg">Asalto!</string>
     <string name="btn_accidente_msg">Accidente!</string>
     <string name="btn_sospechoso_msg">Sospechoso!</string>
