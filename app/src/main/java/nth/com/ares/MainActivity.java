@@ -48,11 +48,12 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
     private NavigationDrawerFragment mNavigationDrawerFragment;
     private Toolbar mToolbar;
 
-
     public boolean isDoneLoading = false;
     public String mUser;
     String mPass;
     String logged = "N";
+
+    Boolean botonesShown = true;
 
     private View mProgressView;
 
@@ -355,26 +356,21 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         int id = item.getItemId();
 
-//        if (id == R.id.action_ubicacion) {
-//            sendMyLoc();
-//        }
-
-//        if (id == R.id.action_asalto) {
-//            chatFragmentList.setMessage("Asalto! Necesito ayuda!");
-//            sendMyLoc();
-//        } else if (id == R.id.action_ubicacion) {
-//            sendMyLoc();
-//        } else if (id == R.id.action_accidente) {
-//            chatFragmentList.setMessage("Accidente! Necesito ayuda!");
-//            sendMyLoc();
-//        } else if (id == R.id.action_ambulancia) {
-//            chatFragmentList.setMessage("Necesito una ambulancia!");
-//            sendMyLoc();
-//        }
-
+        if (id == R.id.action_toggle) {
+            if (botonesShown) {
+                chatFragmentList.scrollViewBotones.setVisibility(View.GONE);
+                item.setIcon(R.drawable.ic_arrow_left);
+                item.setTitle(R.string.mostrar_botones);
+                botonesShown = false;
+            } else {
+                chatFragmentList.scrollViewBotones.setVisibility(View.VISIBLE);
+                item.setIcon(R.drawable.ic_arrow_right);
+                item.setTitle(R.string.ocultar_botones);
+                botonesShown = true;
+            }
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -392,10 +388,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
         MyLocation myLocation = new MyLocation();
         myLocation.getLocation(this, locationResult);
     }
-
-
-
-
 
     public void loadMensajes() {
         Utils.log("main act", "load mensajes");

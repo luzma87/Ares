@@ -12,5 +12,7 @@
     <string name="espere">Espere…</string>
     <string name="calculando_ubicacion">Calculando ubicación</string>
     <string name="login_failed">No se pudo conectar con el servidor. Verifique sus credenciales.</string>
+    <string name="mostrar_botones">Mostrar botones</string>
+    <string name="ocultar_botones">Ocultar botones</string>
 
 </resources>

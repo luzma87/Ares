@@ -54,8 +54,6 @@ public class LoginActivity extends Activity {
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
-
-
     // UI references.
     private AutoCompleteTextView mUserText;
     private EditText mPasswordText;
@@ -63,7 +61,7 @@ public class LoginActivity extends Activity {
     private View mLoginFormView;
     public final int LOGIN_RESULT = 101;
     public final int SHOW_MESSAGE = 102;
-    boolean connected=false;
+    boolean connected = false;
     Context context;
     Messenger mService = null;
     boolean mIsBound;
@@ -72,11 +70,11 @@ public class LoginActivity extends Activity {
     class IncomingHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
-            Utils.log("ChatCom", "activity recibio "+msg.what+" ");
+            Utils.log("ChatCom", "activity recibio " + msg.what + " ");
             switch (msg.what) {
                 case LOGIN_RESULT:
-                    if(msg.arg1==1){
-                        connected=true;
+                    if (msg.arg1 == 1) {
+                        connected = true;
                         Utils.log("LZM_ACTIVITY", "va al main");
                         Intent intent = new Intent(context, MainActivity.class);
                         SharedPreferences sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
@@ -84,8 +82,8 @@ public class LoginActivity extends Activity {
                         editor.putString(getString(R.string.logged), "S");
                         editor.apply();
                         startActivity(intent);
-                    }else{
-                        connected=false;
+                    } else {
+                        connected = false;
                         showProgress(false);
                     }
                     break;
@@ -93,13 +91,14 @@ public class LoginActivity extends Activity {
                     Utils.log("ChatCom", "recibe m");
                     break;
                 case ChatService2.MSG_SET_STRING_VALUE:
-                    Utils.log("ChatCom", "activity recibio "+msg.what+" "+msg.getData().getString("str1"));
+                    Utils.log("ChatCom", "activity recibio " + msg.what + " " + msg.getData().getString("str1"));
                     break;
                 default:
                     super.handleMessage(msg);
             }
         }
     }
+
     private ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
             mService = new Messenger(service);
@@ -108,8 +107,7 @@ public class LoginActivity extends Activity {
                 Message msg = Message.obtain(null, ChatService2.MSG_REGISTER_CLIENT);
                 msg.replyTo = mMessenger;
                 mService.send(msg);
-            }
-            catch (RemoteException e) {
+            } catch (RemoteException e) {
                 // In this case the service has crashed before we could even do anything with it
             }
         }
@@ -123,7 +121,7 @@ public class LoginActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        context=this;
+        context = this;
         isMyServiceRunning(ChatService2.class);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
@@ -151,7 +149,7 @@ public class LoginActivity extends Activity {
                 editor.putString(getString(R.string.saved_user), user);
                 editor.putString(getString(R.string.saved_pass), password);
                 editor.apply();
-                if(!mIsBound)
+                if (!mIsBound)
                     doBindService();
                 sendMessageToService(93);
             }
@@ -177,6 +175,7 @@ public class LoginActivity extends Activity {
 
         return false;
     }
+
     private void CheckIfServiceIsRunning() {
         //If the service is running when the activity starts, we want to automatically bind to it.
         Utils.log("ChatCom", "check if running");
@@ -194,8 +193,7 @@ public class LoginActivity extends Activity {
                     msg.replyTo = mMessenger;
                     mService.send(msg);
                     showProgress(true);
-                }
-                catch (RemoteException e) {
+                } catch (RemoteException e) {
                 }
             }
         }
@@ -206,6 +204,7 @@ public class LoginActivity extends Activity {
         mIsBound = true;
         Utils.log("ChatCom", "binding");
     }
+
     void doUnbindService() {
         if (mIsBound) {
             // If we have received the service, and hence registered with it, then now is the time to unregister.
@@ -214,8 +213,7 @@ public class LoginActivity extends Activity {
                     Message msg = Message.obtain(null, ChatService2.MSG_UNREGISTER_CLIENT);
                     msg.replyTo = mMessenger;
                     mService.send(msg);
-                }
-                catch (RemoteException e) {
+                } catch (RemoteException e) {
                     // There is nothing special we need to do if the service has crashed.
                 }
             }
@@ -231,18 +229,17 @@ public class LoginActivity extends Activity {
         super.onDestroy();
         try {
             doUnbindService();
-        }
-        catch (Throwable t) {
+        } catch (Throwable t) {
             Log.e("ChatCom", "Failed to unbind from the service", t);
         }
     }
+
     @Override
     protected void onStart() {
         super.onStart();
         try {
             doBindService();
-        }
-        catch (Throwable t) {
+        } catch (Throwable t) {
             Log.e("ChatCom", "Failed to unbind from the service", t);
         }
     }
@@ -254,15 +251,13 @@ public class LoginActivity extends Activity {
      * errors are presented and no actual login attempt is made.
      */
     public void attemptLogin() {
-
-
         // Reset errors.
         mUserText.setError(null);
         mPasswordText.setError(null);
 
         // Store values at the time of the login attempt.
         String user = mUserText.getText().toString();
-        String password = mPasswordText.getText().toString();
+        String password = Utils.encodesMD5(mPasswordText.getText().toString());
 
         boolean cancel = false;
         View focusView = null;

@@ -48,9 +48,9 @@ import nth.com.ares.utils.Utils;
  */
 public class ChatService2 extends Service {
     Context context;
-    public final static int SEND_M=91;
-    public final static int RECIBE_M=92;
-    public final static int LOGIN_M=93;
+    public final static int SEND_M = 91;
+    public final static int RECIBE_M = 92;
+    public final static int LOGIN_M = 93;
     private NotificationManager nm;
     private static boolean isRunning = false;
 
@@ -72,17 +72,19 @@ public class ChatService2 extends Service {
     public MultiUserChat multiUserChat;
     public String mUser;
     public String mPass;
-    public int isConected=0;
+    public int isConected = 0;
     XMPP xmpp;
     private Timer timer = new Timer();
+
     @Override
     public IBinder onBind(Intent intent) {
         return mMessenger.getBinder();
     }
+
     class IncomingHandler extends Handler { // Handler of incoming messages from clients.
         @Override
         public void handleMessage(Message msg) {
-            Utils.log("ChatCom", "llego mensaje services "+msg.what);
+            Utils.log("ChatCom", "llego mensaje services " + msg.what);
             switch (msg.what) {
                 case MSG_REGISTER_CLIENT:
                     mClients.add(msg.replyTo);
@@ -91,14 +93,14 @@ public class ChatService2 extends Service {
                     mClients.remove(msg.replyTo);
                     break;
                 case MSG_TEST:
-                    Utils.log("ChatCom", "EEEEEEEEEEEE   Entro test!!! "+msg.what);
-                    if(!checkConnection())
+                    Utils.log("ChatCom", "EEEEEEEEEEEE   Entro test!!! " + msg.what);
+                    if (!checkConnection())
                         xmpp.connect();
                     break;
                 case MSG_SET_INT_VALUE:
-                    if(msg.arg1==LOGIN_M){
-                        Utils.log("ChatCom", "login "+isConected);
-                        if(isConected==0){
+                    if (msg.arg1 == LOGIN_M) {
+                        Utils.log("ChatCom", "login " + isConected);
+                        if (isConected == 0) {
 
                             SharedPreferences sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
                             String defaultUser = "";
@@ -112,7 +114,7 @@ public class ChatService2 extends Service {
                     }
                     break;
                 case SEND_M:
-                    try{
+                    try {
                         Utils.log("ChatCom", "service recibio " + msg.what + " " + msg.getData().getString("str1"));
                         org.jivesoftware.smack.packet.Message msn = new org.jivesoftware.smack.packet.Message();
                         msn.setType(org.jivesoftware.smack.packet.Message.Type.groupchat);
@@ -121,7 +123,7 @@ public class ChatService2 extends Service {
                         multiUserChat.sendMessage(msn);
 
                         Utils.log("XMPP", "Message sent");
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         Utils.log("XMPP", "error enviar mensaje");
                         e.printStackTrace();
                     }
@@ -132,8 +134,9 @@ public class ChatService2 extends Service {
             }
         }
     }
-    public void sendMessageToUI(int tipo,int intvaluetosend) {
-        for (int i=mClients.size()-1; i>=0; i--) {
+
+    public void sendMessageToUI(int tipo, int intvaluetosend) {
+        for (int i = mClients.size() - 1; i >= 0; i--) {
             try {
                 // Send data as an Integer
                 mClients.get(i).send(Message.obtain(null, tipo, intvaluetosend, 0));
@@ -143,16 +146,15 @@ public class ChatService2 extends Service {
                 Message msg = Message.obtain(null, MSG_SET_STRING_VALUE);
                 msg.setData(b);
                 mClients.get(i).send(msg);
-            }
-            catch (RemoteException e) {
+            } catch (RemoteException e) {
                 // The client is dead. Remove it from the list; we are going through the list from back to front so this is safe to do inside the loop.
                 mClients.remove(i);
             }
         }
     }
 
-    private void sendMessage(String from,String date,String body) {
-        for (int i=mClients.size()-1; i>=0; i--) {
+    private void sendMessage(String from, String date, String body) {
+        for (int i = mClients.size() - 1; i >= 0; i--) {
             try {
 
                 //Send data as a String
@@ -163,8 +165,7 @@ public class ChatService2 extends Service {
                 Message msg = Message.obtain(null, SHOW_MESSAGE);
                 msg.setData(b);
                 mClients.get(i).send(msg);
-            }
-            catch (RemoteException e) {
+            } catch (RemoteException e) {
                 // The client is dead. Remove it from the list; we are going through the list from back to front so this is safe to do inside the loop.
                 mClients.remove(i);
             }
@@ -185,9 +186,11 @@ public class ChatService2 extends Service {
         mPass = sharedPref.getString(getString(R.string.saved_pass), defaultPass);
 
     }
+
     private void showNotification() {
 
     }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i("ChatCom", "Received start id " + startId + ": " + intent);
@@ -195,8 +198,7 @@ public class ChatService2 extends Service {
         return START_STICKY; // run until explicitly stopped.
     }
 
-    public static boolean isRunning()
-    {
+    public static boolean isRunning() {
         return isRunning;
     }
 
@@ -213,17 +215,17 @@ public class ChatService2 extends Service {
         timer.cancel();
     }
 
-    public void login(){
+    public void login() {
         Utils.log("ChatCom", "------------------->>>>>><<<<< >>>  Trying to establish connection: user=" + mUser + "  pass=" + mPass);
-        if(mUser!=null && mUser!=""){
-            isConected=0;
+        if (mUser != null && mUser != "") {
+            isConected = 0;
             xmpp = new XMPP(mUser, mPass, this);
             xmpp.connect();
             timer.scheduleAtFixedRate(new TimerTask() {
                 public void run() {
                     onTimerTick();
                 }
-            }, 1000 * 60, 1000 * 60*3);
+            }, 1000 * 60, 1000 * 60 * 3);
             isRunning = true;
 
         }
@@ -244,7 +246,7 @@ public class ChatService2 extends Service {
 
     }
 
-    public void setListener(){
+    public void setListener() {
         Utils.log("ChatCom", "añade listener");
 
         multiUserChat.addMessageListener(new MessageListener() {
@@ -312,7 +314,8 @@ public class ChatService2 extends Service {
                                         .setPriority(NotificationCompat.PRIORITY_MAX)
                                         .setContentTitle(from + " (" + df + ")")
                                         .setStyle(new NotificationCompat.InboxStyle())
-                                        .setContentText(body);
+                                        .setAutoCancel(true)
+                                        .setContentText(body.substring(4));
 
                         Intent resultIntent = new Intent(context, MainActivity.class);
                         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
@@ -327,22 +330,17 @@ public class ChatService2 extends Service {
 
                         NotificationManager mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                         mNotifyMgr.notify(mNotificationId, mBuilder.build());
-
-
                     }
                     msn.save();
-
-
                 }
                 wakeLock.release();
             }
         });
-
     }
 
-    public boolean checkConnection(){
+    public boolean checkConnection() {
         Utils.log("ChatCom", "++++++++++++++ check connection ");
-        if(connection==null)
+        if (connection == null)
             return false;
         try {
             Roster roster = Roster.getInstanceFor(connection);
@@ -350,21 +348,20 @@ public class ChatService2 extends Service {
             Presence p = new Presence(Presence.Type.available, "A", 42, Presence.Mode.available);
             connection.sendPacket(p);
             String xml = availability.toXML().toString();
-            Utils.log("ChatCom", "++++++++++++++  xml  "+xml);
-            Utils.log("ChatCom", "++++++++++++++ is connected  "+connection.isConnected());
-            Utils.log("ChatCom", "++++++++++++++ is auth  "+connection.isAuthenticated());
-            if(!connection.isConnected()) {
+            Utils.log("ChatCom", "++++++++++++++  xml  " + xml);
+            Utils.log("ChatCom", "++++++++++++++ is connected  " + connection.isConnected());
+            Utils.log("ChatCom", "++++++++++++++ is auth  " + connection.isAuthenticated());
+            if (!connection.isConnected()) {
                 return false;
-            }else{
-                if(!connection.isAuthenticated()){
+            } else {
+                if (!connection.isAuthenticated()) {
                     xmpp.login((XMPPTCPConnection) connection);
                     return false;
                 }
             }
 
             return true;
-        }
-        catch (Throwable t) { //you should always ultimately catch all exceptions in timer tasks.
+        } catch (Throwable t) { //you should always ultimately catch all exceptions in timer tasks.
             Utils.log("ChatCom", "++++++++++++++not connected");
             return false;
         }
@@ -376,8 +373,9 @@ public class ChatService2 extends Service {
         ComponentName componentInfo = runningTaskInfo.get(0).topActivity;
         return componentInfo.getPackageName().equals(myPackage);
     }
+
     private void onTimerTick() {
-        if(!checkConnection())
+        if (!checkConnection())
             xmpp.connect();
     }
 }

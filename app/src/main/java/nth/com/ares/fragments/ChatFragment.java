@@ -33,6 +33,7 @@ public class ChatFragment extends Fragment {
     ScrollView scrollViewMessages;
     LinearLayout layoutMessages;
 
+    public ScrollView scrollViewBotones;
 
     private final String[] botonesIds = {
             "asalto",
@@ -135,6 +136,7 @@ public class ChatFragment extends Fragment {
         txtMensaje = (EditText) view.findViewById(R.id.txtMensaje);
 
         scrollViewMessages = (ScrollView) view.findViewById(R.id.scrollViewMessages);
+        scrollViewBotones = (ScrollView) view.findViewById(R.id.scrollViewBotones);
         layoutMessages = (LinearLayout) view.findViewById(R.id.layoutMessages);
 
         DisplayMetrics displaymetrics = new DisplayMetrics();
@@ -273,9 +275,9 @@ public class ChatFragment extends Fragment {
     public void showMessage(Mensaje mensaje) {
         String sender = mensaje.sender;
         String mns = mensaje.body;
-        String fecha = mensaje.fecha ;
-        if(fecha.length()>18)
-            fecha = fecha.substring(10,19);
+        String fecha = mensaje.fecha;
+        if (fecha.length() > 18)
+            fecha = fecha.substring(10, 19);
         Boolean mio = mensaje.esMio();
         showMessage(mio, sender, mns, fecha);
     }
