@@ -326,6 +326,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(getString(R.string.saved_user), "");
         editor.putString(getString(R.string.saved_pass), "");
+        editor.putString(getString(R.string.logged), "N");
         editor.apply();
 
         vaAlLogin = true;

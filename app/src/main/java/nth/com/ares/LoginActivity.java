@@ -144,6 +144,7 @@ public class LoginActivity extends Activity {
             public void onClick(View view) {
                 String user = mUserText.getText().toString();
                 String password = mPasswordText.getText().toString();
+                password=Utils.encodesMD5(password);
                 SharedPreferences sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putString(getString(R.string.saved_user), user);
