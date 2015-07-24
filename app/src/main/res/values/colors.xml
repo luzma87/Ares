@@ -10,16 +10,17 @@
 
     <color name="white">#fff</color>
 
-    <color name="myPrimaryColor">#2196F3</color>
-    <color name="myPrimaryDarkColor">#1976D2</color>
-    <color name="myPrimaryLightColor">#BBDEFB</color>
-    <color name="myAccentColor">#FF9800</color>
+    <color name="myPrimaryColor">#2F4050</color>
+    <color name="myPrimaryDarkColor">#ff5a7787</color>
+    <color name="myPrimaryLightColor">#ff5a7787</color>
+    <color name="myAccentColor">#ffd9d9d9</color>
     <color name="myAccentColorDark">#b06200</color>
     <color name="myDrawerBackground">#FFF</color>
     <color name="myWindowBackground">#FFF</color>
     <color name="myTextPrimaryColor">#212121</color>
     <color name="myTextSecondaryColor">#727272</color>
     <color name="myNavigationColor">#000</color>
+    <color name="verde">#18A689</color>
 
     <drawable name="pressed_gray">#0c000000</drawable>
     <drawable name="selected_gray">#2c000000</drawable>

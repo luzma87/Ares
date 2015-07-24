@@ -311,6 +311,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
 //        Utils.log("LZM-MN-AC", "ON NAVGATION DRAWER ITEM SELECTED START");
         switch (position) {
             case Utils.CHAT_POS:
+                Utils.log("POS","POS!!!! "+chatFragmentList);
                 if(chatFragmentList!=null) {
                     chatFragmentList.layoutMessages.removeAllViews();
                     chatFragmentList.mapas.clear();
