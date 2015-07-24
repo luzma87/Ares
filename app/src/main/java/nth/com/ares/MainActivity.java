@@ -157,8 +157,9 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
         mNavigationDrawerFragment = (NavigationDrawerFragment) getFragmentManager().findFragmentById(R.id.fragment_drawer);
         // Set up the drawer.
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
-        mNavigationDrawerFragment.setup(R.id.fragment_drawer, drawerLayout, mToolbar);
+        mNavigationDrawerFragment.setup(R.id.fragment_drawer, drawerLayout, mToolbar,this);
         dateFormat = android.text.format.DateFormat.getDateFormat(getApplicationContext());
+
 //        Utils.log("LZM-MN-AC", "ON CREATE END");
         Utils.log("LZM_ACTIVITY", "ON CREATE");
 
@@ -279,6 +280,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
     @Override
     protected void onPause() {
         super.onPause();
+        chatFragmentList.layoutMessages.removeAllViews();
+        chatFragmentList.mapas.clear();
         Utils.log("LZM_ACTIVITY", "ON PAUSE");
 
     }
@@ -308,6 +311,10 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
 //        Utils.log("LZM-MN-AC", "ON NAVGATION DRAWER ITEM SELECTED START");
         switch (position) {
             case Utils.CHAT_POS:
+                if(chatFragmentList!=null) {
+                    chatFragmentList.layoutMessages.removeAllViews();
+                    chatFragmentList.mapas.clear();
+                }
                 chatFragmentList = new ChatFragment();
                 Utils.openFragment(context, chatFragmentList, getString(R.string.chat_title));
                 break;

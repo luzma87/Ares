@@ -21,20 +21,20 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:22.1.1'
-    compile 'com.android.support:support-v4:22.1.1'
-    compile 'com.android.support:recyclerview-v7:22.1.1'
-    compile 'com.google.android.gms:play-services:7.3.0'
 
-    compile "org.igniterealtime.smack:smack-android:4.1.0-rc1"
-    compile "org.igniterealtime.smack:smack-tcp:4.1.0-rc1"
     // optional features
-    compile "org.igniterealtime.smack:smack-android-extensions:4.1.0-rc1"
+    
 
     //botones
-    compile 'com.xgc1986.android:ripplebutton:0.4.1'
-
     compile('it.sephiroth.android.library.targettooltip:target-tooltip-library:1.2.2@aar') {
         transitive = true
     }
+compile 'com.android.support:appcompat-v7:22.2.0'
+    compile  'com.android.support:support-v4:22.2.0'
+    compile 'com.android.support:recyclerview-v7:22.2.0'
+    compile  'com.google.android.gms:play-services:7.5.0'
+    compile  'org.igniterealtime.smack:smack-android:4.1.0-rc1'
+    compile 'org.igniterealtime.smack:smack-tcp:4.1.0-rc1'
+    compile 'org.igniterealtime.smack:smack-android-extensions:4.1.0-rc1'
+    compile 'com.xgc1986.android:ripplebutton:0.4.1'
 }

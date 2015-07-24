@@ -14,5 +14,6 @@
     <string name="login_failed">No se pudo conectar con el servidor. Verifique sus credenciales.</string>
     <string name="mostrar_botones">Mostrar botones</string>
     <string name="ocultar_botones">Ocultar botones</string>
+    <string name="title_activity_maps">Map</string>
 
 </resources>

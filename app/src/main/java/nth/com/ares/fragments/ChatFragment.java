@@ -3,6 +3,7 @@ package nth.com.ares.fragments;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -10,11 +11,27 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMapOptions;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.xgc1986.ripplebutton.widget.RippleButton;
 import com.xgc1986.ripplebutton.widget.RippleImageButton;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Random;
+
 import it.sephiroth.android.library.tooltip.TooltipManager;
 import nth.com.ares.MainActivity;
 import nth.com.ares.R;
+import nth.com.ares.classes.MiniMapFragment;
 import nth.com.ares.domains.Mensaje;
 import nth.com.ares.utils.Utils;
 
@@ -31,7 +48,8 @@ public class ChatFragment extends Fragment {
     ImageButton btnSend;
     EditText txtMensaje;
     ScrollView scrollViewMessages;
-    LinearLayout layoutMessages;
+    public LinearLayout layoutMessages;
+    public ArrayList<MiniMapFragment> mapas;
 
     public ScrollView scrollViewBotones;
 
@@ -42,6 +60,14 @@ public class ChatFragment extends Fragment {
             "intruso",
             "libadores",
             "ubicacion"
+    };
+    private final String[] mostrarMapa = {
+            "asL:",
+            "acL:",
+            "ssL:",
+            "inL:",
+            "lbL:",
+            "loc:"
     };
     RippleImageButton[] botones = new RippleImageButton[botonesIds.length];
     String[] botonesTitle = new String[botonesIds.length];
@@ -81,7 +107,7 @@ public class ChatFragment extends Fragment {
         // Inflate the layout for this fragment
         context = (MainActivity) getActivity();
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
-
+        mapas = new ArrayList<>();
         roomName = Utils.getRoomName(context);
         roomService = Utils.getRoomService(context);
         serviceName = Utils.SERVICE_NAME;
@@ -143,7 +169,7 @@ public class ChatFragment extends Fragment {
         context.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         screenHeight = displaymetrics.heightPixels;
         screenWidth = displaymetrics.widthPixels;
-
+        layoutMessages.removeAllViews();
         return view;
     }
 
@@ -152,6 +178,7 @@ public class ChatFragment extends Fragment {
         super.onResume();
         context.setTitle(R.string.chat_title);
     }
+
 
     public void clean() {
         if (layoutMessages != null)
@@ -166,9 +193,25 @@ public class ChatFragment extends Fragment {
 
                     String prefix = mensaje.substring(0, 4);
                     String msg = mensaje.substring(4);
-
-                    Utils.log("LZM", prefix + "          " + msg);
-
+                    boolean esMapa=false;
+                    LatLng ubicacion;
+                    Utils.log("LZM", prefix + "     mensaje:     " + msg+"  "+msg.indexOf("Mi"));
+                    if(Arrays.asList(mostrarMapa).contains(prefix)) {
+                        if(msg.indexOf("Mi")>-1){
+                            Utils.log("MAPA","Es mapa con ubicacion");
+                            esMapa = true;
+                            String[] parts =msg.split(":");
+                            parts = parts[1].split(",");
+                            ubicacion=new LatLng(Double.parseDouble(parts[0]),Double.parseDouble(parts[1]));
+                        }else{
+                            Utils.log("MAPA","Es mapa");
+                            esMapa = true;
+                            String[] parts = msg.split(",");
+                            ubicacion=new LatLng(Double.parseDouble(parts[0]),Double.parseDouble(parts[1]));
+                        }
+                    }else{
+                        ubicacion=null;
+                    }
                     Boolean esMio = mio;
                     String find = roomName + "@" + roomService + "\\." + serviceName + "/";
                     String sentBy = "";
@@ -190,8 +233,7 @@ public class ChatFragment extends Fragment {
                     linearLayout.setLayoutParams(LLParams);
 
                     TextView txvMensaje = new TextView(context);
-                    txvMensaje.setText(msg);
-                    txvMensaje.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize);
+
 
 //                    LinearLayout.LayoutParams lpM = (LinearLayout.LayoutParams) txvMensaje.getLayoutParams();
                     LinearLayout.LayoutParams lpM = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
@@ -204,6 +246,8 @@ public class ChatFragment extends Fragment {
                     txvFecha.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize - 2);
 
                     if (esMio) {
+                        txvMensaje.setText(msg);
+                        txvMensaje.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize);
                         View emptyView = new View(context);
                         LinearLayout.LayoutParams lpE = new LinearLayout.LayoutParams(0, 0, 1f);
                         lpE.gravity = Gravity.BOTTOM;
@@ -214,10 +258,31 @@ public class ChatFragment extends Fragment {
                         txvMensaje.setTextColor(context.getResources().getColor(R.color.mensaje_mio_text));
                         txvMensaje.setPadding(dp5, dp5, dp15, dp5);
                         lpM.gravity = Gravity.END;
+                        if(esMapa){
+                            LinearLayout lv = new LinearLayout(context);
+                            Random r = new Random();
+                            int id = r.nextInt(19990000);
+                            lv.setId(id);
+                            lv.setOrientation(LinearLayout.VERTICAL);
+                            LinearLayout.LayoutParams LLParamsVert = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT);
+                            LLParamsVert.setMargins(5, 5, 5, 10);
+                            lv.setLayoutParams(LLParamsVert);
+                            lv.setBackgroundResource(R.drawable.bubble_mio);
+                            lv.setPadding(dp5, dp5, dp15, dp5);
+                            MiniMapFragment mMapFragment = MiniMapFragment.newInstance(ubicacion,botonesIds[Arrays.asList(mostrarMapa).indexOf(prefix)]);
+                            getFragmentManager().beginTransaction().add( lv.getId(),mMapFragment, "addMap").commit();
+                            linearLayout.addView(emptyView);
+                            linearLayout.addView(lv);
+                            linearLayout.addView(txvFecha);
+                            mapas.add(mMapFragment);
+                        }else{
+                            txvMensaje.setText(msg);
+                            linearLayout.addView(emptyView);
+                            linearLayout.addView(txvMensaje);
+                            linearLayout.addView(txvFecha);
+                        }
 
-                        linearLayout.addView(emptyView);
-                        linearLayout.addView(txvMensaje);
-                        linearLayout.addView(txvFecha);
                     } else {
                         LinearLayout linearLayoutVert = new LinearLayout(context);
                         linearLayoutVert.setOrientation(LinearLayout.VERTICAL);
@@ -233,12 +298,32 @@ public class ChatFragment extends Fragment {
                         txvMensaje.setTextColor(context.getResources().getColor(R.color.mensaje_recibe_text));
                         txvMensaje.setPadding(dp15, dp5, dp5, dp5);
                         lpM.gravity = Gravity.START;
-
                         linearLayoutVert.addView(txvUsuario);
                         linearLayoutVert.addView(txvFecha);
 
-                        linearLayout.addView(linearLayoutVert);
-                        linearLayout.addView(txvMensaje);
+                        if(esMapa){
+                            LinearLayout lv = new LinearLayout(context);
+                            Random r = new Random();
+                            int id = r.nextInt(19990000);
+                            lv.setId(id);
+                            lv.setOrientation(LinearLayout.VERTICAL);
+                            LLParamsVert.setMargins(5,5,5,10);
+                            lv.setLayoutParams(LLParamsVert);
+                            lv.setBackgroundResource(R.drawable.bubble_recibe);
+                            lv.setPadding(dp15, dp5, dp5, dp5);
+                            MiniMapFragment mMapFragment = MiniMapFragment.newInstance(ubicacion,botonesIds[Arrays.asList(mostrarMapa).indexOf(prefix)]);
+                            getFragmentManager().beginTransaction().add( lv.getId(),mMapFragment, "addMap").commit();
+                            linearLayout.addView(linearLayoutVert);
+                            linearLayout.addView(lv);
+                            mapas.add(mMapFragment);
+                        }else{
+                            txvMensaje.setText(msg);
+                            txvMensaje.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize);
+                            linearLayout.addView(linearLayoutVert);
+                            linearLayout.addView(txvMensaje);
+                        }
+
+
                     }
                     txvMensaje.setLayoutParams(lpM);
                     layoutMessages.addView(linearLayout);
