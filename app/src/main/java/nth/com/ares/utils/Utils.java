@@ -63,7 +63,7 @@ public class Utils {
     }
 
     public static void openFragment(MainActivity context, Fragment fragment, String title, Bundle args) {
-        openFragment(context, fragment, title, args, true);
+        openFragment(context, fragment, title, args, false);
     }
 
     public static void openFragment(MainActivity context, Fragment fragment, String title, Bundle args, boolean backstack) {
@@ -88,6 +88,12 @@ public class Utils {
                         .commit();
             }
         }
+    }
+
+    public static void removeFragment(MainActivity context, Fragment fragment){
+        FragmentManager fragmentManager = context.getSupportFragmentManager();
+        fragmentManager.beginTransaction().remove(fragment).commit();
+
     }
 
     public static void hideSoftKeyboard(Activity activity) {

@@ -9,6 +9,7 @@
     -->
 
     <color name="white">#fff</color>
+    <color name="bgcolor">#EFEFF0</color>
 
     <color name="myPrimaryColor">#2F4050</color>
     <color name="myPrimaryDarkColor">#ff5a7787</color>

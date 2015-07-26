@@ -329,7 +329,9 @@ public class ChatService2 extends Service {
                         mBuilder.setContentIntent(resultPendingIntent);
 
                         NotificationManager mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                        mNotifyMgr.notify(mNotificationId, mBuilder.build());
+                        Notification not = mBuilder.build();
+                        not.flags |= Notification.FLAG_AUTO_CANCEL;
+                        mNotifyMgr.notify(mNotificationId, not);
                     }
                     msn.save();
                 }

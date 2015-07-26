@@ -41,11 +41,12 @@ public class MiniMapFragment extends SupportMapFragment {
     }
 
     private void initMap(){
-        UiSettings settings = getMap().getUiSettings();
-        settings.setAllGesturesEnabled(false);
-        settings.setMyLocationButtonEnabled(false);
-        getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(mPosFija, 14));
-        getMap().addMarker(new MarkerOptions().position(mPosFija).title(titulo));
-
+        if(mPosFija!=null){
+            UiSettings settings = getMap().getUiSettings();
+            settings.setAllGesturesEnabled(false);
+            settings.setMyLocationButtonEnabled(false);
+            getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(mPosFija, 14));
+            getMap().addMarker(new MarkerOptions().position(mPosFija).title(titulo));
+        }
     }
 }

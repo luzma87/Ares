@@ -20,7 +20,7 @@
             android:paddingEnd="3dp"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:background="@color/white">
+            android:background="@color/myPrimaryColor">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -91,7 +91,7 @@
             android:layout_alignParentStart="true"
             android:layout_toLeftOf="@id/scrollViewBotones"
             android:layout_toStartOf="@id/scrollViewBotones"
-            android:background="@color/white">
+            android:background="@color/bgcolor">
 
             <LinearLayout
                 android:id="@+id/layoutMessages"
@@ -115,7 +115,7 @@
         <EditText
             android:id="@+id/txtMensaje"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:inputType="textMultiLine"
             android:layout_weight="1"
             android:textColor="@color/mensaje_mio_text" />

@@ -4,13 +4,17 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
+import android.app.AlertDialog;
+import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,6 +29,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
+import com.google.android.gms.maps.SupportMapFragment;
+
+import nth.com.ares.classes.MiniMapFragment;
 import nth.com.ares.classes.MyLocation;
 import nth.com.ares.domains.DbHelper;
 import nth.com.ares.domains.Mensaje;
@@ -52,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
     public String mUser;
     String mPass;
     String logged = "N";
-
+    int id = 0;
     Boolean botonesShown = true;
 
     private View mProgressView;
@@ -182,6 +190,10 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
             startActivity(intent);
             vaAlLogin = true;
         } else {
+            if(chatFragmentList!=null){
+                chatFragmentList.clean();
+                chatFragmentList.mapas.clear();
+            }
             loadMensajes();
             sendMessageToService(ChatService2.MSG_TEST);
         }
@@ -280,8 +292,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
     @Override
     protected void onPause() {
         super.onPause();
-        chatFragmentList.layoutMessages.removeAllViews();
-        chatFragmentList.mapas.clear();
         Utils.log("LZM_ACTIVITY", "ON PAUSE");
 
     }
@@ -296,14 +306,26 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
+
         try {
+            if(chatFragmentList.mapas!=null){
+                Utils.log("Destroy", "va a remover mapas");
+                for(MiniMapFragment m :chatFragmentList.mapas){
+                    if (m != null){
+                        Utils.log("Destroy", "removiendo "+m);
+                        Utils.removeFragment(this,m);
+                    }
+                }
+                chatFragmentList.clean();
+                chatFragmentList.mapas.clear();
+            }
+
             doUnbindService();
         } catch (Throwable t) {
             Log.e("ChatCom", "Failed to unbind from the service", t);
         }
 
-
+        super.onDestroy();
     }
 
     @Override
@@ -311,13 +333,17 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
 //        Utils.log("LZM-MN-AC", "ON NAVGATION DRAWER ITEM SELECTED START");
         switch (position) {
             case Utils.CHAT_POS:
-                Utils.log("POS","POS!!!! "+chatFragmentList);
-                if(chatFragmentList!=null) {
-                    chatFragmentList.layoutMessages.removeAllViews();
-                    chatFragmentList.mapas.clear();
+                Utils.log("POS", "POS!!!! " + chatFragmentList);
+                if(chatFragmentList==null){
+                    Utils.log("POS", "creo nuevo");
+                    chatFragmentList = new ChatFragment();
+                    Utils.openFragment(context, chatFragmentList, getString(R.string.chat_title));
+                }else{
+                    /*TODO cambiar esto cuando hayan mas opciones en el drawer*/
+                    Utils.log("POS", "reutilizo ");
+                   // Utils.openFragment(context, chatFragmentList, getString(R.string.chat_title));
                 }
-                chatFragmentList = new ChatFragment();
-                Utils.openFragment(context, chatFragmentList, getString(R.string.chat_title));
+
                 break;
             case Utils.SETTINGS_POS:
                 break;
@@ -384,23 +410,47 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
     }
 
     public void sendMyLoc(final String pref) {
-        progress = ProgressDialog.show(this, getString(R.string.espere), getString(R.string.calculando_ubicacion), true);
-        MyLocation.LocationResult locationResult = new MyLocation.LocationResult() {
-            @Override
-            public void gotLocation(Location location) {
-                //Got the location!
-                String str = getString(R.string.btn_ubicacion_msg);
-                chatFragmentList.setMessage(pref, str + " " + location.getLatitude() + "," + location.getLongitude());
-                progress.dismiss();
-            }
-        };
-        MyLocation myLocation = new MyLocation();
-        myLocation.getLocation(this, locationResult);
+        final LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
+
+        if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+            buildAlertMessageNoGps();
+        }else{
+            progress = ProgressDialog.show(this, getString(R.string.espere), getString(R.string.calculando_ubicacion), true);
+            MyLocation.LocationResult locationResult = new MyLocation.LocationResult() {
+                @Override
+                public void gotLocation(Location location) {
+                    //Got the location!
+                    String str = getString(R.string.btn_ubicacion_msg);
+                    chatFragmentList.setMessage(pref, str + " " + location.getLatitude() + "," + location.getLongitude());
+                    progress.dismiss();
+                }
+            };
+            MyLocation myLocation = new MyLocation();
+            myLocation.getLocation(this, locationResult);
+        }
+    }
+
+
+    private void buildAlertMessageNoGps() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Su GPS está desactivado, Quiere activarlo?")
+                .setCancelable(false)
+                .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        dialog.cancel();
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
     }
 
     public void loadMensajes() {
         Utils.log("main act", "load mensajes");
-        chatFragmentList.clean();
         MensajeDbHelper db = new MensajeDbHelper(this);
         leidos = db.getAllMensajeesByVisto("S");
         Utils.log("main act ", "leios " + leidos);
