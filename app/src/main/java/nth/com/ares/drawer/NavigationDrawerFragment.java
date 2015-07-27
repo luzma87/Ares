@@ -72,6 +72,7 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
     List<NavigationItem> navigationItems;
     NavigationDrawerAdapter adapter;
     MainActivity activity;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,10 +124,10 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
 
     public List<NavigationItem> getMenu() {
         List<NavigationItem> items = new ArrayList<NavigationItem>();
-        items.add(new NavigationItem("Chat", getResources().getDrawable(R.drawable.ic_speech_bubbles_blue)));
+        items.add(new NavigationItem(getString(R.string.chat_title), getResources().getDrawable(R.drawable.ic_speech_bubbles_blue)));
 //        items.add(new NavigationItem("Rooms", getResources().getDrawable(R.drawable.ic_menu_check)));
-        items.add(new NavigationItem("Configurar", getResources().getDrawable(R.drawable.ic_settings_blue)));
-        items.add(new NavigationItem("Salir", getResources().getDrawable(R.drawable.ic_logout_blue)));
+        items.add(new NavigationItem(getString(R.string.settings_title), getResources().getDrawable(R.drawable.ic_settings_blue)));
+        items.add(new NavigationItem(getString(R.string.logout_title), getResources().getDrawable(R.drawable.ic_logout_blue)));
         return items;
     }
 
@@ -137,10 +138,10 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
      * @param drawerLayout The DrawerLayout containing this fragment's UI.
      * @param toolbar      The Toolbar of the activity.
      */
-    public void setup(int fragmentId, DrawerLayout drawerLayout, Toolbar toolbar,MainActivity activity) {
+    public void setup(int fragmentId, DrawerLayout drawerLayout, Toolbar toolbar, MainActivity activity) {
         mFragmentContainerView = getActivity().findViewById(fragmentId);
         mDrawerLayout = drawerLayout;
-        activity=activity;
+        activity = activity;
         mDrawerLayout.setStatusBarBackgroundColor(getResources().getColor(R.color.myPrimaryDarkColor));
 
         mActionBarDrawerToggle = new ActionBarDrawerToggle(getActivity(), mDrawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {

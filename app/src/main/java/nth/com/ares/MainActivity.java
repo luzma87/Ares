@@ -13,6 +13,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
@@ -139,7 +142,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
         }
     };
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -165,13 +167,21 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
         mNavigationDrawerFragment = (NavigationDrawerFragment) getFragmentManager().findFragmentById(R.id.fragment_drawer);
         // Set up the drawer.
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
-        mNavigationDrawerFragment.setup(R.id.fragment_drawer, drawerLayout, mToolbar,this);
+        mNavigationDrawerFragment.setup(R.id.fragment_drawer, drawerLayout, mToolbar, this);
         dateFormat = android.text.format.DateFormat.getDateFormat(getApplicationContext());
+
+        PackageInfo pInfo = null;
+        String version = "?";
+        try {
+            pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            version = "v. " + pInfo.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+        }
+
+        mNavigationDrawerFragment.setUserData(mUser, version, BitmapFactory.decodeResource(getResources(), R.drawable.avatar));
 
 //        Utils.log("LZM-MN-AC", "ON CREATE END");
         Utils.log("LZM_ACTIVITY", "ON CREATE");
-
-
     }
 
     @Override
@@ -190,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
             startActivity(intent);
             vaAlLogin = true;
         } else {
-            if(chatFragmentList!=null){
+            if (chatFragmentList != null) {
                 chatFragmentList.clean();
                 chatFragmentList.mapas.clear();
             }
@@ -308,12 +318,12 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
     protected void onDestroy() {
 
         try {
-            if(chatFragmentList.mapas!=null){
+            if (chatFragmentList.mapas != null) {
                 Utils.log("Destroy", "va a remover mapas");
-                for(MiniMapFragment m :chatFragmentList.mapas){
-                    if (m != null){
-                        Utils.log("Destroy", "removiendo "+m);
-                        Utils.removeFragment(this,m);
+                for (MiniMapFragment m : chatFragmentList.mapas) {
+                    if (m != null) {
+                        Utils.log("Destroy", "removiendo " + m);
+                        Utils.removeFragment(this, m);
                     }
                 }
                 chatFragmentList.clean();
@@ -334,14 +344,14 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
         switch (position) {
             case Utils.CHAT_POS:
                 Utils.log("POS", "POS!!!! " + chatFragmentList);
-                if(chatFragmentList==null){
+                if (chatFragmentList == null) {
                     Utils.log("POS", "creo nuevo");
                     chatFragmentList = new ChatFragment();
                     Utils.openFragment(context, chatFragmentList, getString(R.string.chat_title));
-                }else{
+                } else {
                     /*TODO cambiar esto cuando hayan mas opciones en el drawer*/
                     Utils.log("POS", "reutilizo ");
-                   // Utils.openFragment(context, chatFragmentList, getString(R.string.chat_title));
+                    // Utils.openFragment(context, chatFragmentList, getString(R.string.chat_title));
                 }
 
                 break;
@@ -410,11 +420,11 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
     }
 
     public void sendMyLoc(final String pref) {
-        final LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
+        final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             buildAlertMessageNoGps();
-        }else{
+        } else {
             progress = ProgressDialog.show(this, getString(R.string.espere), getString(R.string.calculando_ubicacion), true);
             MyLocation.LocationResult locationResult = new MyLocation.LocationResult() {
                 @Override
