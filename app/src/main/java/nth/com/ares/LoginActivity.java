@@ -260,6 +260,8 @@ public class LoginActivity extends Activity {
         String user = mUserText.getText().toString();
         String password = Utils.encodesMD5(mPasswordText.getText().toString());
 
+//        System.out.println("Login attempt: -u "+user+"   -p "+password);
+
         boolean cancel = false;
         View focusView = null;
 
