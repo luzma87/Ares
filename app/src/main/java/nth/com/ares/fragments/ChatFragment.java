@@ -271,7 +271,7 @@ public class ChatFragment extends Fragment {
                             lv.setBackgroundResource(R.drawable.bubble_mio);
                             lv.setPadding(dp5, dp5, dp15, dp5);
                             MiniMapFragment mMapFragment = MiniMapFragment.newInstance(ubicacion,botonesIds[Arrays.asList(mostrarMapa).indexOf(prefix)]);
-                            getFragmentManager().beginTransaction().add( lv.getId(),mMapFragment, "addMap").commit();
+                            getFragmentManager().beginTransaction().add( lv.getId(),mMapFragment, "addMap").commitAllowingStateLoss();
                             linearLayout.addView(emptyView);
                             linearLayout.addView(lv);
                             linearLayout.addView(txvFecha);
@@ -312,7 +312,7 @@ public class ChatFragment extends Fragment {
                             lv.setBackgroundResource(R.drawable.bubble_recibe);
                             lv.setPadding(dp15, dp5, dp5, dp5);
                             MiniMapFragment mMapFragment = MiniMapFragment.newInstance(ubicacion,botonesIds[Arrays.asList(mostrarMapa).indexOf(prefix)]);
-                            getFragmentManager().beginTransaction().add( lv.getId(),mMapFragment, "addMap").commit();
+                            getFragmentManager().beginTransaction().add( lv.getId(),mMapFragment, "addMap").commitAllowingStateLoss();
                             linearLayout.addView(linearLayoutVert);
                             linearLayout.addView(lv);
                             mapas.add(mMapFragment);
