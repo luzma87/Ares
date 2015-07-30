@@ -8,8 +8,8 @@ android {
         applicationId "nth.com.ares"
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode 2
-        versionName "0.2.3"
+        versionCode 4
+        versionName "0.2.4.1"
     }
     buildTypes {
         release {
@@ -29,7 +29,7 @@ dependencies {
     compile('it.sephiroth.android.library.targettooltip:target-tooltip-library:1.2.2@aar') {
         transitive = true
     }
-compile 'com.android.support:appcompat-v7:22.2.0'
+    compile 'com.android.support:appcompat-v7:22.2.0'
     compile  'com.android.support:support-v4:22.2.0'
     compile 'com.android.support:recyclerview-v7:22.2.0'
     compile  'com.google.android.gms:play-services:7.5.0'

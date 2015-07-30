@@ -79,8 +79,8 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
         <meta-data
-            android:name="com.google.android.maps.v2.API_KEY"
-            android:value="@string/google_maps_key" />
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyByaSlWY9cQHu8z9GYhodvEZY1aum5vhUk" />
 
         <uses-library  android:required="false" android:name="com.sec.android.app.multiwindow"> </uses-library>
         <meta-data android:name="com.sec.android.support.multiwindow" android:value="true" />
