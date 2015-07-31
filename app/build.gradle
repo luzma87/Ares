@@ -8,8 +8,8 @@ android {
         applicationId "nth.com.ares"
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode 5
-        versionName "0.2.4.2"
+        versionCode 6
+        versionName "0.2.4.3"
     }
     buildTypes {
         release {
